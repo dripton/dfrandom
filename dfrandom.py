@@ -7,7 +7,7 @@ import copy
 import random
 
 
-def list_levels(name, cost, num_levels):
+def list_levels(name, cost, num_levels, min_level=1):
     """Return a list of num_levels tuples, each with the name and
     cost of that level.
 
@@ -15,7 +15,7 @@ def list_levels(name, cost, num_levels):
     cost is per level
     """
     lst = []
-    for level in xrange(1, num_levels + 1):
+    for level in xrange(min_level, min_level + num_levels):
         tup = (name % level, cost * level)
         lst.append(tup)
     return lst
@@ -338,7 +338,7 @@ def generate_cleric():
         [("Language (Spoken: Native / Written: Native)", 6)],
         [("Luck", 15)],
         list_levels("Mind Shield %d", 4, 5),
-        [("Power Investiture 4", 10), ("Power Investiture 5", 20)],
+        list_levels("Power Investiture %d", 10, 2, min_level=4),
         [("Resistant to Disease (PM) +3", 3),
          ("Resistant to Disease (PM) +8", 5)],
         list_levels("Signature Gear %d", 1, 10),
