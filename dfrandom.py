@@ -132,7 +132,7 @@ def generate_barbarian():
         list_levels("Ham-Fisted %d", -5, 2),
         [("Horrible Hangovers", -1)],
         list_self_control_levels("Impulsiveness", -10),
-        list_self_control_levels("Overconfidence", -10),
+        list_self_control_levels("Overconfidence", -5),
         [("Sense of Duty (Adventuring companions)", -5)],
     ]
     disads2.extend(disads1)
