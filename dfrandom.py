@@ -730,7 +730,137 @@ def generate_druid():
     print_traits(traits)
 
 def generate_holy_warrior():
-    pass
+    traits = []
+    ads1 = [
+        [("Higher Purpose (Slay Demons)", 5),
+         ("Higher Purpose (Slay Undead)", 5)],
+    ]
+    traits.extend(pick_from_list(ads1, 5))
+
+    # Merge the two lists since extra points can go either way.
+    ads2 = [
+        [("Ally (Divine servent, PM, Summonable, 12-)", 19),
+         ("Ally (Divine servent, PM, Summonable, 15-)", 29)],
+        [("Detect evil (PM)", 18),
+         ("Detect good (PM)", 18),
+         ("Detect supernatural beings (PM)", 18),
+         ("Ally (Divine servent, PM, Summonable, 15-)", 29)],
+        [("Healing (Faith Healing, PM)", 33)],
+        [("Intuition (PM)", 14)],
+        [("Oracle (PM)", 14)],
+        [("Patron (Deity, PM, Special Abilities, Highly Accessible, 6-)", 36),
+         ("Patron (Deity, PM, Special Abilities, Highly Accessible, 9-)", 72)],
+        [("Resistant to Evil Supernatural Powers (PM) +3", 5),
+         ("Resistant to Evil Supernatural Powers (PM) +8", 7)],
+        [("Spirit Empathy (PM)", 9)],
+        [("True Faith (PM, Turning)", 24)],
+        list_levels("ST +%d", 10, 2),
+        [("DX +1", 20)],
+        list_levels("HT +%d", 10, 2),
+        list_levels("HP +%d", 2, 3),
+        list_levels("Will +%d", 5, 5),
+        list_levels("Born War Leader %d", 5, 3, min_level=2),
+        [("Combat Reflexes", 15)],
+        [("Enhanced Block 1", 5)],
+        [("Enhanced Parry 1 (One Melee Weapon Skill)", 5)],
+        list_levels("Fearlessness +%d", 2, 5),
+        [("Unfazeable", 15)],
+        list_levels("Hard to Kill %d", 2, 5),
+        list_levels("Hard to Subdue %d", 2, 5),
+        [("High Pain Threshold", 10)],
+        [("Higher Purpose (Slay Demons)", 5),
+         ("Higher Purpose (Slay Undead)", 5)],
+        list_levels("Holiness %d", 5, 2, min_level=3),
+        [("Luck", 15)],
+        list_levels("Magic Resistance %d", 2, 5),
+        [("Rapid Healing", 5)],
+        [("Recovery", 10)],
+        [("Resistant to Disease +3", 3),
+         ("Resistant to Disease +8", 5)],
+        [("Resistant to Poison +3", 5)],
+        list_levels("Signature Gear %d", 1, 10),
+        [("Striking ST 1", 5), ("Striking ST 2", 9)],
+        [("Weapon Bond", 1)],
+    ]
+    ads2.extend(ads1)
+    # Avoid duplicate Higher Purpose
+    for trait in traits:
+        if trait in ads2:
+            ads2.remove(trait)
+    traits.extend(pick_from_list(ads2, 50))
+
+    disads1 = [
+        [("Honesty", -10)],
+        [("Sense of Duty (Good entities)", -10)],
+        [("Vow (Own no more than horse can carry)", -10)],
+    ]
+    traits.extend(pick_from_list(disads1, -10))
+
+    disads2 = [
+        list_self_control_levels("Charitable", -15),
+        list_self_control_levels("Compulsive Generosity", -5),
+        list_self_control_levels("Compulsive Vowing", -5),
+        [("Disciplines of Faith (Ritualism)", -5),
+         ("Disciplines of Faith (Ritualism)", -10),
+         ("Disciplines of Faith (Mysticism)", -5),
+         ("Disciplines of Faith (Mysticism)", -10)],
+        [("Fanaticism", -15)],
+        [("Intolerance (Evil religions)", -5),
+         ("Intolerance (All other religions)", -10)],
+        list_self_control_levels("Selfless", -5),
+        list_self_control_levels("Truthfulness", -5),
+        [("Vow (Chastity)", -5)],
+    ]
+    disads2.extend(disads1)
+    traits.extend(pick_from_list(disads2, -15))
+
+    disads3 = [
+        list_self_control_levels("Bloodlust", -10),
+        [("Code of Honor (Chivalry)", -15)],
+        [("Easy to Read", -10)],
+        [("No Sense of Humor", -10)],
+        list_self_control_levels("Overconfidence", -5),
+        [("Sense of Duty (Adventuring companions)", -5)],
+        [("Stubbornness", -5)],
+    ]
+    disads3.extend(disads2)
+    traits.extend(pick_from_list(disads3, -15))
+
+    skills1 = [
+        [("Crossbow", 4)],
+        [("Thrown Weapon (Axe/Mace)", 4)],
+        [("Thrown Weapon (Spear)", 4)],
+        [("Throwing", 4)],
+    ]
+    traits.extend(pick_from_list(skills1, 4))
+
+    skills2 = [
+        [("Axe/Mace", 12), ("Broadsword", 12), ("Spear", 12), ("Flail", 12)],
+        [("Shield", 8)],
+        [("Polearm", 20)],
+        [("Spear", 20)],
+        [("Two-Handed Sword", 20)],
+    ]
+    traits.extend(pick_from_list(skills2, 20))
+
+    skills3 = [
+        [("Fast-Draw (any)", 1)],
+        [("Climbing", 1)],
+        [("Lance", 1)],
+        [("Riding (Horse)", 1)],
+        [("Stealth", 1)],
+        [("First Aid", 1)],
+        [("Gesture", 1)],
+        [("Interrogation", 1)],
+        [("Physiology (other monster type)", 1)],
+        [("Psychology (other monster type)", 1)],
+        [("Hiking", 1)],
+        [("Observation", 1)],
+    ]
+    traits.extend(pick_from_list(skills3, 1))
+
+    print_traits(traits)
+
 
 def generate_knight():
     pass
