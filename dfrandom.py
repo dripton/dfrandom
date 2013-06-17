@@ -863,8 +863,140 @@ def generate_holy_warrior():
 
 
 def generate_knight():
-    pass
+    traits = []
+    ads1 = [
+        list_levels("ST +%d", 10, 6),
+        list_levels("DX +%d", 20, 3),
+        list_levels("HT +%d", 10, 6),
+        list_levels("HP +%d", 2, 4),
+        list_levels("Basic Speed +%d", 20, 2),
+        [("Alcohol Tolerance", 1)],
+        list_levels("Born War Leader %d", 5, 2, min_level=3),
+        [("Enhanced Block 1", 5)],
+        [("Enhanced Parry 1 (One Melee Weapon Skill)", 5)],
+        list_levels("Fearlessness +%d", 2, 5),
+        [("Fit", 5), ("Very Fit", 15)],
+        list_levels("Hard to Kill %d", 2, 5),
+        list_levels("Hard to Subdue %d", 2, 5),
+        [("Luck", 15), ("Extraordinary Luck", 30)],
+        [("Penetrating Voice", 1)],
+        [("Rapid Healing", 5)],
+        [("Recovery", 10)],
+        list_levels("Signature Gear %d", 1, 10),
+        list_levels("Striking ST %d", 5, 2),
+        [("Weapon Bond", 1)],
+        [("Weapon Master (One weapon)", 20),
+         ("Weapon Master (Two weapons normally used together)", 25),
+         ("Weapon Master (Small class of weapons)", 30),
+         ("Weapon Master (Medium class of weapons)", 35),
+         ("Weapon Master (Large class of weapons)", 40),
+         ("Weapon Master (All muscle-powered weapons)", 40)],
+    ]
+    traits.extend(pick_from_list(ads1, 60))
 
+    disads1 = [
+        list_self_control_levels("Bad Temper", -10),
+        list_self_control_levels("Bloodlust", -10),
+        [("Code of Honor (Pirate's)", -5), ("Code of Honor (Soldier's)", -10),
+         ("Code of Honor (Chivalry)", -15)],
+        list_self_control_levels(
+          "Obsession (Slay some specific type of monster)", -5),
+        [("One Eye", -15)],
+        [("Sense of Duty (Nation)", -10)],
+        [("Vow (Never resist a challenge to combat)", -10)],
+        [("Wounded", -5)],
+    ]
+    traits.extend(pick_from_list(disads1, -20))
+
+    disads2 = [
+        list_self_control_levels("Bully", -10),
+        list_self_control_levels("Compulsive Carousing", -5),
+        list_self_control_levels("Greed", -15),
+        list_self_control_levels("Honesty", -10),
+        list_self_control_levels("Lecherousness", -15),
+        list_self_control_levels("Overconfidence", -5),
+        [("Sense of Duty (Adventuring companions)", -5)],
+    ]
+    disads2.extend(disads1)
+    traits.extend(pick_from_list(disads2, -15))
+
+    skills1 = [
+        [("Brawling", 2)],
+        [("Boxing", 2)],
+    ]
+    traits.extend(pick_from_list(skills1, 2))
+
+    skills2 = [
+        [("Sumo Wrestling", 2)],
+        [("Wrestling", 2)],
+    ]
+    traits.extend(pick_from_list(skills2, 2))
+
+    skills3 = [
+        [("Crossbow", 4)],
+        [("Thrown Weapon (Axe/Mace)", 4)],
+        [("Thrown Weapon (Spear)", 4)],
+        [("Bow", 4)],
+        [("Throwing", 4)],
+        [("Sling", 4)],
+    ]
+    traits.extend(pick_from_list(skills3, 4))
+
+    skills4 = [
+        [("Axe/Mace", 24)],
+        [("Broadsword", 24)],
+        [("Polearm", 24)],
+        [("Shortsword", 24)],
+        [("Spear", 24)],
+        [("Two-Handed Sword", 24)],
+        [("Flail", 24)],
+        [("Axe/Mace", 12)],
+        [("Broadsword", 12)],
+        [("Polearm", 12)],
+        [("Shortsword", 12)],
+        [("Spear", 12)],
+        [("Two-Handed Sword", 12)],
+        [("Flail", 12)],
+        [("Axe/Mace", 8)],
+        [("Broadsword", 8)],
+        [("Lance", 8)],
+        [("Polearm", 8)],
+        [("Riding (Horse)", 8)],
+        [("Shortsword", 8)],
+        [("Spear", 8)],
+        [("Two-Handed Sword", 8)],
+        [("Flail", 8)],
+    ]
+    traits.extend(pick_from_list(skills4, 24))
+
+    skills5 = [
+        [("Armoury (Body Armor)", 1)],
+        [("Armoury (Melee Weapons)", 1)],
+    ]
+    traits.extend(pick_from_list(skills5, 1))
+
+    skills6 = [
+        [("Forced Entry", 1)],
+        [("Climbing", 1)],
+        [("Stealth", 1)],
+        [("First Aid", 1)],
+        [("Gesture", 1)],
+        [("Savoir-Faire (High Society)", 1)],
+        [("Gambling", 1)],
+        [("Heraldry", 1)],
+        [("Streetwise", 1)],
+        [("Carousing", 1)],
+        [("Hiking", 1)],
+        [("Intimidation", 1)],
+        [("Scrounging", 1)],
+        [("Observation", 1)],
+    ]
+    traits.extend(pick_from_list(skills6, 4))
+
+    print_traits(traits)
+
+
+# TODO Some special skills require others as prereqs
 def generate_martial_artist():
     pass
 
