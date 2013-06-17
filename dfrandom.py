@@ -671,7 +671,6 @@ def generate_druid():
     ]
     traits.extend(pick_from_list(skills5, 1))
 
-    # TODO Avoid duplicate Hidden Lore
     skills5 = [
         [("Knife", 1)],
         [("First Aid", 1)],
@@ -684,6 +683,10 @@ def generate_druid():
         [("Diagnosis", 1)],
         [("Poisons", 1)],
     ]
+    # Avoid duplicate Hidden Lore
+    for trait in traits:
+        if trait in skills5:
+            skills5.remove(trait)
     traits.extend(pick_from_list(skills5, 5))
 
     if "Power Investiture 4" in traits or "Power Investiture 5" in traits:
