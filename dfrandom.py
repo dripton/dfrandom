@@ -1117,7 +1117,137 @@ def generate_swashbuckler():
 
 
 def generate_thief():
-    pass
+    traits = []
+    ads1 = [
+        [("DX +1", 20)],
+        [("IQ +1", 20)],
+        list_levels("Per +%d", 5, 6),
+        [("Basic Speed +1", 20)],
+        list_levels("Basic Move +%d", 5, 2),
+        [("Ambidexterity", 5)],
+        [("Catfall", 10)],
+        [("Combat Reflexes", 15)],
+        [("Danger Sense", 15)],
+        list_levels("Enhanced Dodge %d", 15, 2),
+        list_levels("Gizmos %d", 5, 3),
+        list_levels("High Manual Dexterity %d", 5, 3, min_level=2),
+        [("Honest Face", 1)],
+        [("Luck", 15), ("Extraordinary Luck", 30)],
+        list_levels("Night Vision %d", 1, 9),
+        [("Peripheral Vision", 15)],
+        list_levels("Serendipity %d", 15, 2),
+        list_levels("Signature Gear %d", 1, 10),
+        list_levels("Striking ST %d (Only on surprise attack)", 2, 2),
+        [("Wealth (Comfortable)", 10), ("Wealth (Wealthy)", 20)],
+        [("Double-Jointed", 10)],
+    ]
+    traits.extend(pick_from_list(ads1, 30))
+
+    disads1 = [
+        [("Greed (12)", -15)],
+        [("Kleptomania (12)", -15)],
+        [("Trickster (12)", -15)],
+    ]
+    traits.extend(pick_from_list(disads1, -15))
+
+    disads2 = [
+        [("Callous (12)", -5)],
+        [("Code of Honor (Pirate's)", -5)],
+        [("Curious", -5)],
+    ]
+    traits.extend(pick_from_list(disads2, -5))
+
+    disads3 = [
+        list_self_control_levels("Bad Temper", -10),
+        list_self_control_levels("Bloodlust", -10),
+        list_self_control_levels("Compulsive Carousing", -5),
+        list_self_control_levels("Compulsive Gambling", -5),
+        list_self_control_levels("Compulsive Lying", -15),
+        list_self_control_levels("Compulsive Spending", -5),
+        list_self_control_levels("Cowardice", -10),
+        [("Laziness", -10)],
+        list_self_control_levels("Lecherousness", -15),
+        list_self_control_levels("Loner", -5),
+        [("One Eye", -15)],
+        list_self_control_levels("Overconfidence", -5),
+        list_self_control_levels("Post-Combat Shakes", -5),
+        [("Sense of Duty (Adventuring companions)", -5)],
+        [("Skinny", -5)],
+        [("Social Stigma (Criminal Record)", -5)],
+    ]
+    disads3.extend(disads1)
+    disads3.extend(disads2)
+    traits.extend(pick_from_list(disads3, -20))
+
+    fixed_skills = [
+        [("Forced Entry", 1)],
+        [("Climbing", 1)],
+        [("Filch", 2)],
+        [("Stealth", 12)],
+        [("Escape", 1)],
+        [("Pickpocket", 2)],
+        [("Lockpicking", 4)],
+        [("Traps", 4)],
+        [("Acrobatics", 1)],
+        [("Sleight of Hand", 1)],
+        [("Gesture", 1)],
+        [("Holdout", 2)],
+        [("Shadowing", 2)],
+        [("Smuggling", 2)],
+        [("Streetwise", 2)],
+        [("Search", 2)],
+        [("Urban Survival", 2)],
+        [("Brawling", 1)],
+        [("Gambling", 1)],
+        [("Carousing", 1)],
+    ]
+    for fixed_skill in fixed_skills:
+        traits.append(fixed_skill[0])
+
+    skills1 = [
+        [("Rapier", 2), ("Saber", 2), ("Shortsword", 2), ("Smallsword", 2)],
+        [("Rapier", 1), ("Saber", 1), ("Shortsword", 1), ("Smallsword", 1)],
+        [("Shield (Buckler)", 1), ("Cloak", 1), ("Main-Gauche", 1)],
+    ]
+
+    skills2 = [
+        [("Crossbow", 1)],
+        [("Thrown Weapon (Knife)", 1)],
+        [("Bow", 1)],
+        [("Throwing", 1)],
+        [("Sling", 1)],
+    ]
+
+    skills3 = [
+        [("Fast-Draw (any)", 1)],
+        [("Garrote", 1)],
+        [("First Aid", 1)],
+        [("Panhandling", 1)],
+        [("Seamanship", 1)],
+        [("Cartography", 1)],
+        [("Connoisseur (any)", 1)],
+        [("Disguise", 1)],
+        [("Fast-Talk", 1)],
+        [("Merchant", 1)],
+        [("Counterfeiting", 1)],
+        [("Forgery", 1)],
+        [("Poisons", 1)],
+        [("Hiking", 1)],
+        [("Scrounging", 1)],
+        [("Lip Reading", 1)],
+        [("Observation", 1)],
+    ]
+
+    all_skills = (copy.deepcopy(skills1) + copy.deepcopy(skills2) +
+                  copy.deepcopy(skills3) + copy.deepcopy(fixed_skills))
+
+    traits.extend(pick_from_list(skills1, 2))
+    traits.extend(pick_from_list(skills2, 1))
+
+    # TODO 7 points on any previous skill or...
+
+    print_traits(traits)
+
 
 def generate_wizard():
     pass
