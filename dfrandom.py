@@ -779,7 +779,7 @@ def generate_holy_warrior():
          ("Resistant to Disease +8", 5)],
         [("Resistant to Poison +3", 5)],
         list_levels("Signature Gear %d", 1, 10),
-        [("Striking ST 1", 5), ("Striking ST 2", 9)],
+        list_levels("Striking ST %d", 5, 2),
         [("Weapon Bond", 1)],
     ]
     ads2.extend(ads1)
