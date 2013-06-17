@@ -98,7 +98,7 @@ def generate_barbarian():
         list_levels("Lifting ST +%d", 3, 3),
         [("Luck", 15), ("Extraordinary Luck", 30)],
         list_levels("Magic Resistance %d", 2, 5),
-        list_levels("Signature Gear %d", 1, 5),
+        list_levels("Signature Gear %d", 1, 10),
         [("Striking ST 1", 5), ("Striking ST 2", 9)],
         list_levels("Temperature Tolerance %d", 1, 2),
         [("Weapon Bond", 1)],
