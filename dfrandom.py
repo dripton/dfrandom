@@ -386,7 +386,7 @@ def generate_cleric():
         [("Weirdness Magnet", -15)],
     ]
     disads3.extend(disads2)
-    traits.extend(pick_from_list(disads2, -25))
+    traits.extend(pick_from_list(disads3, -25))
 
     skills1 = [
         [("Innate Attack", 4)],
