@@ -352,7 +352,7 @@ def generate_cleric():
     traits.extend(pick_from_list(ads2, 20))
 
     disads1 = [
-        [("Honesty", -10)],
+        [("Honesty (12)", -10)],
         [("Sense of Duty (Coreligionists)", -10)],
         [("Vow (No edged weapons)", -10)],
     ]
@@ -790,7 +790,7 @@ def generate_holy_warrior():
     traits.extend(pick_from_list(ads2, 50))
 
     disads1 = [
-        [("Honesty", -10)],
+        [("Honesty (12)", -10)],
         [("Sense of Duty (Good entities)", -10)],
         [("Vow (Own no more than horse can carry)", -10)],
     ]
