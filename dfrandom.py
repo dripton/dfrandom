@@ -454,7 +454,272 @@ def generate_cleric():
 
 
 def generate_druid():
-    pass
+    traits = []
+    spells = [
+        # PI 1
+        [("Beast-Rouser", 1)],
+        [("Beast-Soother", 1)],
+        [("Detect Magic", 1)],
+        [("Detect Poison", 1)],
+        [("Extinguish Fire", 1)],
+        [("Find Direction", 1)],
+        [("Hawk Vision", 1)],
+        [("Identify Plant", 1)],
+        [("Master", 1)],
+        [("No-Smell", 1)],
+        [("Purify Air", 1)],
+        [("Purify Earth", 1)],
+        [("Purify Water", 1)],
+        [("Quick March", 1)],
+        [("Recover Energy", 1)],
+        [("Seek Coastline", 1)],
+        [("Seek Earth", 1)],
+        [("Seek Food", 1)],
+        [("Seek Pass", 1)],
+        [("Seek Plant", 1)],
+        [("Seek Water", 1)],
+        [("Sense Life", 1)],
+        [("Tell Position", 1)],
+        [("Umbrella", 1)],
+        # PI 2
+        [("Animal Control", 1)],
+        [("Beast Link", 1)],
+        [("Beast Seeker", 1)],
+        [("Beast Speech", 1)],
+        [("Bless Plants", 1)],
+        [("Cure Disease", 1)],
+        [("Fog", 1)],
+        [("Frost", 1)],
+        [("Heal Plant", 1)],
+        [("Hide Path", 1)],
+        [("Know Location", 1)],
+        [("Light Tread", 1)],
+        [("Mystic Mist", 1)],
+        [("Neutralize Poison", 1)],
+        [("Pathfinder", 1)],
+        [("Plant Growth", 1)],
+        [("Plant Vision", 1)],
+        [("Pollen Cloud", 1)],
+        [("Predict Earth Movement", 1)],
+        [("Predict Weather", 1)],
+        [("Purify Food", 1)],
+        [("Repel Animal", 1)],
+        [("Rider", 1)],
+        [("Rider Within", 1)],
+        [("Shape Air", 1)],
+        [("Shape Earth", 1)],
+        [("Shape Plant", 1)],
+        [("Shape Water", 1)],
+        [("Spider Silk", 1)],
+        [("Wall of Wind", 1)],
+        [("Weather Dome", 1)],
+        [("Windstorm", 1)],
+        # PI 3
+        [("Animate Plant", 1)],
+        [("Beast Summoning", 1)],
+        [("Blossom", 1)],
+        [("Breathe Water", 1)],
+        [("Clouds", 1)],
+        [("Conceal", 1)],
+        [("Create Plant", 1)],
+        [("False Tracks", 1)],
+        [("Forest Warning", 1)],
+        [("Freeze", 1)],
+        [("Instant Neutralize Poison", 1)],
+        [("Melt Ice", 1)],
+        [("Plant Control", 1)],
+        [("Plant Sense", 1)],
+        [("Plant Speech", 1)],
+        [("Protect Animal", 1)],
+        [("Rain", 1)],
+        [("Rain of Nuts", 1)],
+        [("Rejuvenate Plant", 1)],
+        [("Remember Path", 1)],
+        [("Resist Cold", 1)],
+        [("Resist Lightning", 1)],
+        [("Resist Pressure", 1)],
+        [("Snow", 1)],
+        [("Snow Shoes", 1)],
+        [("Summon Elemental", 1)],
+        [("Tangle Growth", 1)],
+        [("Walk Through Plants", 1)],
+        [("Walk Through Wood", 1)],
+        [("Water Vision", 1)],
+        [("Waves", 1)],
+        [("Whirlpool", 1)],
+        [("Wind", 1)],
+    ]
+    ads1 = [
+        [("Ally (Nature spirit or totem beast, PM, Summonable, 12-)", 19),
+         ("Ally (Nature spirit or totem beast, PM, Summonable, 15-)", 29)],
+        [("Animal Empathy (PM)", 5)],
+        [("Channeling (PM, Nature Spirits)", 4)],
+        [("Damage Resistance 1 (Limited Elemental, PM)", 4),
+         ("Damage Resistance 2 (Limited Elemental, PM)", 7)],
+        [("Detect (Plants, PM)", 18),
+         ("Detect (Animals, PM)", 18),
+         ("Detect (Anything Alive, PM)", 27)],
+        [("Medium (PM, Nature Spirits)", 4)],
+        [("Mind Control (Animals Only, PM)", 33)],
+        [("Plant Empathy (PM)", 5)],
+        [("Speak With Animals (PM)", 23)],
+        [("Speak With Plants (PM)", 14)],
+        [("Terrain Adaptation (Ice, PM)", 5),
+         ("Terrain Adaptation (Mud, PM)", 5),
+         ("Terrain Adaptation (Snow, PM)", 5)],
+    ]
+    ads1.extend(spells)
+    # TODO Add PI 4 spells if PI 4 is selected.  (No points left after PI 5.)
+    traits.extend(pick_from_list(ads1, 20))
+
+    ads2 = [
+        [("IQ +1", 20)],
+        list_levels("HT +%d", 10, 2),
+        list_levels("Per +%d", 5, 4),
+        list_levels("FP +%d", 3, 6),
+        list_levels("Animal Friend %d", 5, 4),
+        list_levels("Green Thumb %d", 5, 3, min_level=2),
+        list_levels("Healer %d", 10, 2),
+        [("Intuition", 15)],
+        [("Luck", 15)],
+        list_levels("Mind Shield %d", 4, 5),
+        list_levels("Outdoorsman %d", 10, 2),
+        list_levels("Power Investiture (Druidic) %d", 10, 2, min_level=4),
+        [("Resistant to Disease (PM) +3", 3),
+         ("Resistant to Disease (PM) +8", 5)],
+        list_levels("Signature Gear %d", 1, 10),
+        [("Spirit Empathy", 10)],
+    ]
+    ads2.extend(ads1)
+    traits.extend(pick_from_list(ads2, 20))
+
+    disads1 = [
+        [("Disciplines of Faith (Ritualism)", -5),
+         ("Disciplines of Faith (Ritualism)", -10),
+         ("Disciplines of Faith (Mysticism)", -5),
+         ("Disciplines of Faith (Mysticism)", -10)],
+        [("Sense of Duty (Wild Nature)", -15)],
+        [("Vow (Vegetarianism)", -5)],
+        [("Vow (Never Sleep Indoors)", -5)],
+        [("Wealth (Struggling)", -10), ("Wealth (Poor)", -15)],
+    ]
+    traits.extend(pick_from_list(disads1, -20))
+
+    disads2 = [
+        [("Intolerance (Urbanites)", -5)],
+        list_self_control_levels("Loner", -5),
+        [("No Sense of Humor", -10)],
+        [("Odious Personal Habit (Dirty Hippy)", -5)],
+        list_self_control_levels("Overconfidence", -5),
+        list_self_control_levels("Phobia (Crowds)", -5),
+        list_self_control_levels("Phobia (Fire)", -5),
+        list_self_control_levels("Phobia (Machinery)", -5),
+        [("Stubbornness", -5)],
+        [("Weirdness Magnet", -15)],
+    ]
+    disads2.extend(disads1)
+    traits.extend(pick_from_list(disads2, -25))
+
+    skills1 = [
+        [("Innate Attack", 4)],
+        [("Thrown Weapon (Spear)", 4)],
+        [("Thrown Weapon (Stick)", 4)],
+        [("Bolas", 4)],
+        [("Lasso", 4)],
+        [("Throwing", 4)],
+        [("Blowpipe", 4)],
+        [("Net", 4)],
+        [("Sling", 4)],
+    ]
+    traits.extend(pick_from_list(skills1, 4))
+
+    skills2 = [
+        [("Axe/Mace", 8), ("Broadsword", 8), ("Shortsword", 8), ("Spear", 8)],
+        [("Shield", 4)],
+        [("Spear", 12)],
+        [("Staff", 12)],
+    ]
+    traits.extend(pick_from_list(skills2, 12))
+
+    skills3 = [
+        [("Hidden Lore (Elementals)", 1)],
+        [("Hidden Lore (Faeries)", 1)],
+        [("Hidden Lore (Nature Spirits)", 1)],
+    ]
+    traits.extend(pick_from_list(skills3, 1))
+
+    skills4 = [
+        [("Mimicry (Animal Sounds)", 1)],
+        [("Mimicry (Bird Calls)", 1)],
+    ]
+    traits.extend(pick_from_list(skills4, 1))
+
+    skills5 = [
+        [("Survival (Arctic)", 1)],
+        [("Survival (Desert)", 1)],
+        [("Survival (Island/Beach)", 1)],
+        [("Survival (Jungle)", 1)],
+        [("Survival (Mountain)", 1)],
+        [("Survival (Plains)", 1)],
+        [("Survival (Swampland)", 1)],
+        [("Survival (Woodlands)", 1)],
+    ]
+    traits.extend(pick_from_list(skills5, 1))
+
+    # TODO Avoid duplicate Hidden Lore
+    skills5 = [
+        [("Knife", 1)],
+        [("First Aid", 1)],
+        [("Gesture", 1)],
+        [("Animal Handling (any other)", 1)],
+        [("Hidden Lore (Elementals)", 1)],
+        [("Hidden Lore (Faeries)", 1)],
+        [("Hidden Lore (Nature Spirits)", 1)],
+        [("Teaching", 1)],
+        [("Diagnosis", 1)],
+        [("Poisons", 1)],
+    ]
+    traits.extend(pick_from_list(skills5, 5))
+
+    if "Power Investiture 4" in traits or "Power Investiture 5" in traits:
+        spells.extend([
+            [("Beast Possession", 1)],
+            [("Blight", 1)],
+            [("Body of Slime", 1)],
+            [("Body of Water", 1)],
+            [("Body of Wind", 1)],
+            [("Body of Wood", 1)],
+            [("Control Elemental", 1)],
+            [("Create Animal", 1)],
+            [("Create Spring", 1)],
+            [("Dispel Magic", 1)],
+            [("Dry Spring", 1)],
+            [("Frostbite", 1)],
+            [("Hail", 1)],
+            [("Lightning", 1)],
+            [("Plant Form", 1)],
+            [("Sandstorm", 1)],
+            [("Shapeshifting", 1)],
+            [("Storm", 1)],
+            [("Strike Barren", 1)],
+            [("Tide", 1)],
+            [("Wither Plant", 1)],
+        ])
+        if "Power Investiture 5" in traits:
+            spells.extend([
+                [("Alter Terrain", 1)],
+                [("Arboreal Immurement", 1)],
+                [("Create Elemental", 1)],
+                [("Entombment", 1)],
+                [("Partial Shapeshifting", 1)],
+                [("Permanent Beast Possession", 1)],
+                [("Permanent Shapeshifting", 1)],
+                [("Plant Form Other", 1)],
+                [("Shapeshift Others", 1)],
+            ])
+    traits.extend(pick_from_list(spells, 20))
+
+    print_traits(traits)
 
 def generate_holy_warrior():
     pass
