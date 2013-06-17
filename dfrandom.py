@@ -1003,8 +1003,118 @@ def generate_martial_artist():
 def generate_scout():
     pass
 
+
 def generate_swashbuckler():
-    pass
+    traits = []
+    ads1 = [
+        list_levels("ST +%d", 10, 6),
+        list_levels("DX +%d", 20, 3),
+        list_levels("Basic Speed +%d", 20, 2),
+        list_levels("Basic Move +%d", 5, 3),
+        [("Alcohol Tolerance", 1)],
+        [("Ambidexterity", 5)],
+        [("Appearance: Attractive", 4), ("Appearance: Handsome", 12),
+         ("Appearance: Very Handsome", 16)],
+        list_levels("Charisma %d", 5, 5),
+        [("Daredevil", 15)],
+        [("Enhanced Dodge", 15)],
+        list_levels("Enhanced Parry %d (Weapon of Choice)", 5, 2, min_level=2),
+        [("Extra Attack 1", 25)],
+        [("No Hangover", 1)],
+        [("Perfect Balance", 15)],
+        [("Rapier Wit", 5)],
+        list_levels("Serendipity %d", 15, 4),
+        list_levels("Signature Gear %d", 1, 10),
+        list_levels("Striking ST %d", 5, 2),
+        [("Extraordinary Luck", 15), ("Ridiculous Luck", 45)],
+    ]
+    traits.extend(pick_from_list(ads1, 60))
+
+    disads1 = [
+        [("Code of Honor (Pirate's)", -5),
+         ("Code of Honor (Gentleman's)", -10)],
+        list_self_control_levels(
+          "Obsession (Become the best swordsman in the world)", -10),
+        [("Vow (Use only weapon of choice)", -5)],
+        [("Vow (Never resist a challenge to combat)", -10)],
+        [("Vow (Challenge every swordsman to combat)", -15)],
+        [("Vow (Never wear armor)", -15)],
+        [("Wounded", -5)],
+    ]
+    traits.extend(pick_from_list(disads1, -15))
+
+    disads2 = [
+        list_self_control_levels("Impulsiveness", -10),
+        list_self_control_levels("Overconfidence", -5),
+        list_self_control_levels("Short Attention Span", -10),
+        list_self_control_levels("Trickster", -10),
+    ]
+    disads2.extend(disads1)
+    traits.extend(pick_from_list(disads2, -15))
+
+    disads3 = [
+        list_self_control_levels2("Chummy", -5, "Gregarious)", -10),
+        list_self_control_levels("Compulsive Carousing", -5),
+        list_self_control_levels("Compulsive Spending", -5),
+        list_self_control_levels("Greed", -15),
+        list_self_control_levels("Jealousy", -10),
+        list_self_control_levels("Lecherousness", -15),
+        [("One Eye", -15)],
+        [("Sense of Duty (Adventuring companions)", -5)],
+        [("Wounded", -5)],
+    ]
+    disads3.extend(disads2)
+    traits.extend(pick_from_list(disads3, -20))
+
+    skills1 = [
+        [("Thrown Weapon (Knife)", 2)],
+        [("Throwing", 2)],
+    ]
+    traits.extend(pick_from_list(skills1, 2))
+
+    skills2 = [
+        [("Broadsword", 20), ("Rapier", 20), ("Saber", 20),
+         ("Shortsword", 20), ("Smallsword", 20)],
+        [("Broadsword", 16), ("Rapier", 16), ("Saber", 16),
+         ("Shortsword", 16), ("Smallsword", 16)],
+        [("Broadsword", 12), ("Rapier", 12), ("Saber", 12),
+         ("Shortsword", 12), ("Smallsword", 12)],
+        [("Shield (Buckler)", 8), ("Cloak", 8), ("Main-Gauche", 8)],
+        [("Shield (Buckler)", 4), ("Cloak", 4), ("Main-Gauche", 4)],
+    ]
+    traits.extend(pick_from_list(skills2, 20))
+
+    skills3 = [
+        [("Brawling", 2)],
+        [("Boxing", 2)],
+    ]
+    traits.extend(pick_from_list(skills3, 2))
+
+    skills4 = [
+        [("Savoir-Faire (High Society)", 2)],
+        [("Streetwise", 2)],
+    ]
+    traits.extend(pick_from_list(skills4, 2))
+
+    skills5 = [
+        [("Fast-Draw (any other)", 1)],
+        [("Climbing", 1)],
+        [("First Aid", 1)],
+        [("Gesture", 1)],
+        [("Seamanship", 1)],
+        [("Connoisseur (any)", 1)],
+        [("Fast-Talk", 1)],
+        [("Gambling", 1)],
+        [("Hiking", 1)],
+        [("Sex Appeal", 1)],
+        [("Intimidation", 1)],
+        [("Scrounging", 1)],
+        [("Search", 1)],
+    ]
+    traits.extend(pick_from_list(skills5, 7))
+
+    print_traits(traits)
+
 
 def generate_thief():
     pass
