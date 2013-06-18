@@ -72,6 +72,49 @@ def pick_from_list(lst, points):
     return traits
 
 
+def next_skill_cost(cost):
+    """Return the next higher skill cost after cost."""
+    if cost == 0:
+        return 1
+    elif cost == 1:
+        return 2
+    elif cost == 2:
+        return 4
+    else:
+        return cost + 4
+
+
+def pick_or_improve_skills_from_list(skills, points, traits):
+    """Add points to skills, and modify traits in place.
+
+    If a skill is already in traits then bring it up to the next
+    level, if enough points remain.
+
+    Otherwise add it at the 1-point level.
+
+    :param skills is a set of skill names
+    :param points int number of points to spend
+    :param traits list of (trait name, points) tuples
+    """
+    points_left = points
+    skills_lst = list(skills)
+    while skills_lst and points_left != 0:
+        skill_name = random.choice(skills_lst)
+        for ii, skill_tup in enumerate(traits):
+            (skill_name2, cost) = skill_tup
+            if skill_name2 == skill_name:
+                cost2 = next_skill_cost(cost)
+                difference = cost2 - cost
+                if difference <= points_left:
+                    traits[ii] = (skill_name2, cost2)
+                    points_left -= difference
+                    break
+        else:
+            cost2 = 1
+            traits.append((skill_name, cost2))
+            points_left -= cost2
+
+
 def print_traits(traits):
     for name, cost in traits:
         print "%s [%d]" % (name, cost)
@@ -1238,13 +1281,16 @@ def generate_thief():
         [("Observation", 1)],
     ]
 
-    all_skills = (copy.deepcopy(skills1) + copy.deepcopy(skills2) +
-                  copy.deepcopy(skills3) + copy.deepcopy(fixed_skills))
+    all_skills = set()
+    for lst in [skills1, skills2, skills3, fixed_skills]:
+        for lst2 in lst:
+            for tup in lst2:
+                all_skills.add(tup[0])
 
     traits.extend(pick_from_list(skills1, 2))
     traits.extend(pick_from_list(skills2, 1))
 
-    # TODO 7 points on any previous skill or...
+    pick_or_improve_skills_from_list(all_skills, 7, traits)
 
     print_traits(traits)
 
