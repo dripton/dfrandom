@@ -648,7 +648,7 @@ def generate_druid():
          ("Disciplines of Faith (Mysticism)", -10)],
         [("Sense of Duty (Wild Nature)", -15)],
         [("Vow (Vegetarianism)", -5)],
-        [("Vow (Never Sleep Indoors)", -5)],
+        [("Vow (Never Sleep Indoors)", -10)],
         [("Wealth (Struggling)", -10), ("Wealth (Poor)", -15)],
     ]
     traits.extend(pick_from_list(disads1, -20))
