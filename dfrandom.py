@@ -659,7 +659,7 @@ def generate_druid():
         [("No Sense of Humor", -10)],
         [("Odious Personal Habit (Dirty Hippy)", -5)],
         list_self_control_levels("Overconfidence", -5),
-        list_self_control_levels("Phobia (Crowds)", -5),
+        list_self_control_levels("Phobia (Crowds)", -15),
         list_self_control_levels("Phobia (Fire)", -5),
         list_self_control_levels("Phobia (Machinery)", -5),
         [("Stubbornness", -5)],
