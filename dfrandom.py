@@ -1043,8 +1043,134 @@ def generate_knight():
 def generate_martial_artist():
     pass
 
+
 def generate_scout():
-    pass
+    traits = []
+    ads1 = [
+        list_levels("ST +%d", 10, 2),
+        [("DX +1", 20)],
+        list_levels("HT +%d", 10, 2),
+        list_levels("Per +%d", 5, 4),
+        [("Basic Speed +1", 20)],
+        list_levels("Basic Move +%d", 5, 3),
+        [("Absolute Direction", 5)],
+        list_levels("Acute Vision %d", 2, 5),
+        [("Combat Reflexes", 15)],
+        [("Danger Sense", 15)],
+        [("Fit", 5), ("Very Fit", 15)],
+        [("High Pain Threshold", 10)],
+        [("Luck", 15)],
+        list_levels("Night Vision %d", 1, 9),
+        list_levels("Outdoorsman %d", 10, 2, min_level=3),
+        [("Peripheral Vision", 15)],
+        [("Rapid Healing", 5)],
+        list_levels("Signature Gear %d", 1, 10),
+        [("Weapon Bond", 1)],
+        [("Weapon Master (Bow)", 20)],
+    ]
+    traits.extend(pick_from_list(ads1, 20))
+
+    disads1 = [
+        list_self_control_levels("Bloodlust", -10),
+        [("Callous (12)", -5)],
+        list_self_control_levels("Greed", -15),
+        list_self_control_levels("Honesty", -10),
+        list_self_control_levels("Overconfidence", -5),
+        [("Sense of Duty (Adventuring companions)", -5)],
+        [("Stubbornness", -5)],
+    ]
+    traits.extend(pick_from_list(disads1, -15))
+
+    disads2 = [
+        [("Code of Honor (Pirate's)", -5), ("Code of Honor (Soldier's)", -10)],
+        [("Intolerance (Urbanites)", -5)],
+        list_self_control_levels("Loner", -5),
+        [("No Sense of Humor", -10)],
+        [("Odious Personal Habit (Unwashed bushwhacker)", -5)],
+        [("Paranoia", -10)],
+        list_self_control_levels("Phobia (Crowds)", -15),
+        [("Social Stigma (Disowned)", -5)],
+        [("Vow (Never Sleep Indoors)", -10)],
+        [("Vow (Own no more than what can be carried)", -10)],
+    ]
+    disads2.extend(disads1)
+    traits.extend(pick_from_list(disads2, -35))
+
+    fixed_skills = [
+        [("Bow", 16)],
+        [("Camouflage", 2)],
+        [("Fast-Draw (Arrow)", 1)],
+        [("Observation", 2)],
+        [("Tracking", 2)],
+        [("Climbing", 1)],
+        [("Stealth", 1)],
+        [("Gesture", 2)],
+        [("Cartography", 4)],
+        [("Shadowing", 4)],
+        [("Traps", 4)],
+        [("Mimicry (Bird Calls)", 2)],
+        [("Hiking", 2)],
+    ]
+    for fixed_skill in fixed_skills:
+        traits.append(fixed_skill[0])
+
+    skills1 = [
+        [("Broadsword", 12), ("Shortsword", 12), ("Spear", 12), ("Staff", 12)],
+        [("Broadsword", 8), ("Shortsword", 8), ("Spear", 8)],
+        [("Shield", 4)],
+    ]
+
+    skills2 = [
+        [("Navigation (Land)", 1)],
+        [("Navigation (Sea)", 1)],
+    ]
+
+    skills3 = [
+        [("Survival (Arctic)", 1)],
+        [("Survival (Desert)", 1)],
+        [("Survival (Island/Beach)", 1)],
+        [("Survival (Jungle)", 1)],
+        [("Survival (Mountain)", 1)],
+        [("Survival (Plains)", 1)],
+        [("Survival (Swampland)", 1)],
+        [("Survival (Woodlands)", 1)],
+    ]
+
+    skills4 = [
+        [("Brawling", 1)],
+        [("Fast-Draw (any other)", 1)],
+        [("Garrote", 1)],
+        [("Jumping", 1)],
+        [("Knife", 1)],
+        [("Knot-Tying", 1)],
+        [("Boating (Unpowered)", 1)],
+        [("Riding (Horse)", 1)],
+        [("Throwing", 1)],
+        [("Wrestling", 1)],
+        [("First Aid", 1)],
+        [("Seamanship", 1)],
+        [("Armoury (Missile Weapons)", 1)],
+        [("Prospecting", 1)],
+        [("Weather Sense", 1)],
+        [("Swimming", 1)],
+        [("Running", 1)],
+        [("Skiing", 1)],
+        [("Search", 1)],
+    ]
+
+    all_skills = set()
+    for lst in [skills1, skills2, skills3, skills4, fixed_skills]:
+        for lst2 in lst:
+            for tup in lst2:
+                all_skills.add(tup[0])
+
+    traits.extend(pick_from_list(skills1, 12))
+    traits.extend(pick_from_list(skills2, 1))
+    traits.extend(pick_from_list(skills3, 1))
+
+    pick_or_improve_skills_from_list(all_skills, 8, traits)
+
+    print_traits(traits)
 
 
 def generate_swashbuckler():
