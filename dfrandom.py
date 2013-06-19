@@ -467,7 +467,9 @@ def generate_cleric():
     ]
     traits.extend(pick_from_list(skills4, 5))
 
-    if "Power Investiture 4" in traits or "Power Investiture 5" in traits:
+    trait_names = set((trait[0] for trait in traits))
+    if ("Power Investiture 4" in trait_names or
+        "Power Investiture 5" in trait_names):
         spells.extend([
             [("Astral Block", 1)],
             [("Banish", 1)],
@@ -484,7 +486,7 @@ def generate_cleric():
             [("Suspend Curse", 1)],
             [("Vigil", 1)],
         ])
-        if "Power Investiture 5" in traits:
+        if "Power Investiture 5" in trait_names:
             spells.extend([
                 [("Bless", 1)],
                 [("Curse", 1)],
@@ -732,7 +734,9 @@ def generate_druid():
             skills5.remove(trait)
     traits.extend(pick_from_list(skills5, 5))
 
-    if "Power Investiture 4" in traits or "Power Investiture 5" in traits:
+    trait_names = set((trait[0] for trait in traits))
+    if ("Power Investiture 4" in trait_names or
+        "Power Investiture 5" in trait_names):
         spells.extend([
             [("Beast Possession", 1)],
             [("Blight", 1)],
@@ -756,7 +760,7 @@ def generate_druid():
             [("Tide", 1)],
             [("Wither Plant", 1)],
         ])
-        if "Power Investiture 5" in traits:
+        if "Power Investiture 5" in trait_names:
             spells.extend([
                 [("Alter Terrain", 1)],
                 [("Arboreal Immurement", 1)],
