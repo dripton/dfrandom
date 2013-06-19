@@ -84,7 +84,7 @@ def next_skill_cost(cost):
         return cost + 4
 
 
-def pick_or_improve_skills_from_list(skills, points, traits):
+def pick_or_improve_skills_from_list(skills, points, traits, min_cost=1):
     """Add points to skills, and modify traits in place.
 
     If a skill is already in traits then bring it up to the next
@@ -110,7 +110,7 @@ def pick_or_improve_skills_from_list(skills, points, traits):
                     points_left -= difference
                     break
         else:
-            cost2 = 1
+            cost2 = min_cost
             traits.append((skill_name, cost2))
             points_left -= cost2
 
@@ -1043,9 +1043,191 @@ def generate_knight():
     print_traits(traits)
 
 
-# TODO Some special skills require others as prereqs
+# TODO Flying Leap requires Power Blow as a prereq
 def generate_martial_artist():
-    pass
+    traits = []
+
+    special_skills = [
+        [("Immovable Stance", 2)],
+        [("Light Walk", 2)],
+        [("Parry Missile Weapons", 2)],
+        [("Push", 2)],
+        [("Breaking Blow", 2)],
+        [("Flying Leap", 2)],
+        [("Pressure Points", 2)],
+        [("Breath Control", 2)],
+        [("Kiai", 2)],
+        [("Body Control", 2)],
+        [("Mental Strength", 2)],
+        [("Mind Block", 2)],
+        [("Autohypnosis", 2)],
+        [("Power Blow", 2)],
+        [("Esoteric Medicine", 2)],
+        [("Blind Fighting", 2)],
+    ]
+
+    ads1 = [
+        [("Catfall (PM)", 9)],
+        [("DR 1 (Tough Skin, PM)", 3), ("DR 2 (Touch Skin, PM)", 5)],
+        [("Danger Sense (PM)", 14)],
+        [("Enhanced Move 0.5 (Ground, PM)", 9),
+         ("Enhanced Move 1 (Ground, PM)", 18)],
+        [("Extra Attack 1 (PM)", 23), ("Extra Attack 2 (PM)", 45)],
+        [("Metabolism Control 1 (PM)", 5), ("Metabolism Control 2 (PM)", 9),
+         ("Metabolism Control 3 (PM)", 14), ("Metabolism Control 4 (PM)", 18),
+         ("Metabolism Control 5 (PM)", 23)],
+        [("Perfect Balance (PM)", 14)],
+        [("Regeneration (Slow, PM)", 9),
+         ("Regeneration (Regular, PM)", 23),
+         ("Regeneration (Fast, PM)", 45)],
+        [("Resistant to Metabolic Hazards +3 (PM)", 9),
+         ("Resistant to Metabolic Hazards +8 (PM)", 14)],
+        [("Striking ST 1 (PM)", 5), ("Striking ST 2 (PM)", 9)],
+        list_levels("Super Jump %d (PM)", 9, 2),
+    ]
+    ads1.extend(special_skills[:])
+    traits.extend(pick_from_list(ads1, 20))
+
+    ads2 = [
+        list_levels("ST +%d", 10, 2),
+        [("DX +1", 20)],
+        [("IQ +1", 20)],
+        list_levels("HT +%d", 10, 2),
+        list_levels("Will +%d", 5, 4),
+        list_levels("Per +%d", 5, 4),
+        list_levels("FP +%d", 3, 6),
+        [("Basic Speed +1", 20)],
+        list_levels("Basic Move +%d", 5, 2),
+        [("Ambidexterity", 5)],
+        [("Chi Talent 3", 15)],
+        [("Combat Reflexes", 15)],
+        [("Enhanced Dodge 1", 15)],
+        list_levels("Enhanced Parry %d (Unarmed)", 5, 2),
+        [("Fit", 5), ("Very Fit", 15)],
+        [("Flexibility", 5), ("Double-Jointed", 15)],
+        [("High Pain Threshold", 10)],
+        [("Luck", 15)],
+        list_levels("Magic Resistance %d", 2, 5),
+        list_levels("Mind Shield %d", 4, 5),
+        list_levels("Signature Gear %d", 1, 10),
+        [("Unfazeable", 15)],
+        [("Weapon Bond", 1)],
+        [("Weapon Master (One exotic weapon)", 20)],
+        [("Wild Talent 1", 20)],
+    ]
+    ads2.extend(ads1)
+    traits.extend(pick_from_list(ads2, 20))
+
+    disads1 = [
+        [("Code of Honor (Bushido)", -15)],
+        list_self_control_levels("Compulsive Vowing", -5),
+        list_self_control_levels("Honesty", -10),
+        list_self_control_levels("Overconfidence", -5),
+        list_self_control_levels(
+          "Obsession (Perfect my art at any cost!)", -10),
+        [("Social Stigma (Minority Group)", -10)],
+        [("Vow (Vegetarianism)", -5)],
+        [("Vow (Silence)", -10)],
+        [("Vow (Always Fight Unarmed)", -15)],
+        [("Wealth (Struggling)", -10), ("Wealth (Poor)", -15),
+         ("Wealth (Dead Broke)", -25)],
+    ]
+    traits.extend(pick_from_list(disads1, -25))
+
+    disads2 = [
+        [("Callous (12)", -5)],
+        list_self_control_levels("Loner", -5),
+        [("No Sense of Humor", -10)],
+        list_self_control_levels("Overconfidence", -5),
+        [("Sense of Duty (Adventuring companions)", -5)],
+        [("Stubbornness", -5)],
+    ]
+    disads2.extend(disads1)
+    traits.extend(pick_from_list(disads2, -15))
+
+    fixed_skills = [
+        [("Jumping", 1)],
+        [("Acrobatics", 2)],
+        [("Judo", 2)],
+        [("Karate", 2)],
+        [("Stealth", 1)],
+        [("Meditation", 2)],
+        [("Tactics", 4)],
+    ]
+    for fixed_skill in fixed_skills:
+        traits.append(fixed_skill[0])
+
+    skills1 = [
+        [("Thrown Weapon (Dart)", 1)],
+        [("Thrown Weapon (Knife)", 1)],
+        [("Thrown Weapon (Shuriken)", 1)],
+        [("Throwing", 1)],
+        [("Blowpipe", 1)],
+        [("Sling", 1)],
+    ]
+    traits.extend(pick_from_list(skills1, 1))
+
+    melee_option = random.randrange(3)
+    if melee_option == 0:
+        skills2 = [
+            [("Knife", 4)],
+            [("Axe/Mace", 4)],
+            [("Jitte/Sai", 4)],
+            [("Shortsword", 4)],
+            [("Smallsword", 4)],
+            [("Staff", 4)],
+            [("Tonfa", 4)],
+            [("Flail", 4)],
+            [("Kusari", 4)],
+        ]
+        traits.extend(pick_from_list(skills2, 8))
+    elif melee_option == 1:
+        skills3 = [
+            [("Knife", 4)],
+            [("Axe/Mace", 4)],
+            [("Jitte/Sai", 4)],
+            [("Shortsword", 4)],
+            [("Smallsword", 4)],
+            [("Staff", 4)],
+            [("Tonfa", 4)],
+            [("Flail", 4)],
+            [("Kusari", 4)],
+        ]
+        traits.extend(pick_from_list(skills3, 4))
+        traits = [(name, cost) for (name, cost) in traits
+                  if name != "Judo" and name != "Karate"]
+        traits.append(("Judo", 4))
+        traits.append(("Karate", 4))
+    else:
+        traits = [(name, cost) for (name, cost) in traits
+                  if name != "Judo" and name != "Karate"]
+        if random.randrange(2) == 0:
+            traits.append(("Judo", 8))
+            traits.append(("Karate", 4))
+        else:
+            traits.append(("Judo", 4))
+            traits.append(("Karate", 8))
+
+    special_skill_names = set()
+    for lst in special_skills:
+        for tup in lst:
+            special_skill_names.add(tup[0])
+    pick_or_improve_skills_from_list(special_skill_names, 14, traits,
+                                     min_cost=2)
+
+    # Prereq hack.
+    trait_names = set((trait[0] for trait in traits))
+    if "Flying Leap" in trait_names and "Power Blow" not in trait_names:
+        for (name, cost) in traits:
+            if name == "Flying Leap":
+                traits.remove((name, cost))
+                break
+        remaining_special_skill_names = list(special_skill_names - trait_names -
+                                             set(["Flying Leap"]))
+        name2 = random.choice(remaining_special_skill_names)
+        traits.append((name2, cost))
+
+    print_traits(traits)
 
 
 def generate_scout():
