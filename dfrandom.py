@@ -234,8 +234,7 @@ def generate_barbarian():
         [("Observation", 1)],
     ]
     traits.extend(pick_from_list(skills5, 4))
-
-    print_traits(traits)
+    return traits
 
 
 def generate_bard():
@@ -499,8 +498,7 @@ def generate_cleric():
                 [("Suspend Mana", 1)],
             ])
     traits.extend(pick_from_list(spells, 20))
-
-    print_traits(traits)
+    return traits
 
 
 def generate_druid():
@@ -773,8 +771,7 @@ def generate_druid():
                 [("Shapeshift Others", 1)],
             ])
     traits.extend(pick_from_list(spells, 20))
-
-    print_traits(traits)
+    return traits
 
 def generate_holy_warrior():
     traits = []
@@ -905,8 +902,7 @@ def generate_holy_warrior():
         [("Observation", 1)],
     ]
     traits.extend(pick_from_list(skills3, 1))
-
-    print_traits(traits)
+    return traits
 
 
 def generate_knight():
@@ -1039,8 +1035,7 @@ def generate_knight():
         [("Observation", 1)],
     ]
     traits.extend(pick_from_list(skills6, 4))
-
-    print_traits(traits)
+    return traits
 
 
 # TODO Flying Leap requires Power Blow as a prereq
@@ -1226,8 +1221,7 @@ def generate_martial_artist():
                                              set(["Flying Leap"]))
         name2 = random.choice(remaining_special_skill_names)
         traits.append((name2, cost))
-
-    print_traits(traits)
+    return traits
 
 
 def generate_scout():
@@ -1355,8 +1349,7 @@ def generate_scout():
     traits.extend(pick_from_list(skills3, 1))
 
     pick_or_improve_skills_from_list(all_skills, 8, traits)
-
-    print_traits(traits)
+    return traits
 
 
 def generate_swashbuckler():
@@ -1467,8 +1460,7 @@ def generate_swashbuckler():
         [("Search", 1)],
     ]
     traits.extend(pick_from_list(skills5, 7))
-
-    print_traits(traits)
+    return traits
 
 
 def generate_thief():
@@ -1627,6 +1619,7 @@ template_to_fn = {
 
 templates = sorted(template_to_fn.iterkeys())
 
+
 def main():
     parser = argparse.ArgumentParser(description=
       "Generate a random GURPS Dungeon Fantasy character")
@@ -1639,8 +1632,10 @@ def main():
     if template not in templates:
         raise argparse.ArgumentTypeError("Invalid template; must be one of %s"
           % ", ".join(templates + ["random"]))
+    print template.title()
     fn = template_to_fn[template]
-    fn()
+    traits = fn()
+    print_traits(traits)
 
 
 if __name__ == "__main__":
