@@ -1038,7 +1038,6 @@ def generate_knight():
     return traits
 
 
-# TODO Flying Leap requires Power Blow as a prereq
 def generate_martial_artist():
     traits = []
 
