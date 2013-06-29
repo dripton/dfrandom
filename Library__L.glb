@@ -48913,20 +48913,6 @@
 			</prereq_list>
 		</spell>
 		<spell version="2">
-			<name>Dull @Sense@</name>
-			<college>Mind Control</college>
-			<power_source>Arcane</power_source>
-			<spell_class>Regular</spell_class>
-			<casting_cost>1/2 pts decrease</casting_cost>
-			<maintenance_cost>Half</maintenance_cost>
-			<casting_time>1 sec</casting_time>
-			<duration>30 min</duration>
-			<reference>M133</reference>
-			<categories>
-				<category>Mind Control</category>
-			</categories>
-		</spell>
-		<spell version="2">
 			<name>Dull Hearing</name>
 			<college>Mind Control</college>
 			<power_source>Arcane</power_source>
@@ -51041,7 +51027,7 @@
 			</categories>
 			<prereq_list all="yes">
 				<spell_prereq has="yes">
-					<college compare="is">protection &amp; warning</college>
+					<college compare="is">Protection</college>
 					<quantity compare="at_least">3</quantity>
 				</spell_prereq>
 				<spell_prereq has="yes">
@@ -51218,14 +51204,14 @@
 			<prereq_list all="yes">
 				<spell_prereq has="yes">
 					<college compare="is">water</college>
+					<quantity compare="at_least">5</quantity>
 				</spell_prereq>
 				<spell_prereq has="yes">
-					<name compare="is">create well</name>
-					<quantity compare="at_least">5</quantity>
+					<name compare="is">create spring</name>
 				</spell_prereq>
 				<prereq_list all="no">
 					<spell_prereq has="yes">
-						<name compare="is">earth</name>
+						<college compare="is">earth</college>
 						<quantity compare="at_least">4</quantity>
 					</spell_prereq>
 					<spell_prereq has="yes">
@@ -52798,7 +52784,7 @@
 		</spell>
 		<spell version="2">
 			<name>Images of the Past</name>
-			<college>Knowledge/Light &amp; Darkness</college>
+			<college>Knowledge/Light</college>
 			<power_source>Arcane</power_source>
 			<spell_class>Regular</spell_class>
 			<casting_cost>3 + Time modifier</casting_cost>
@@ -52808,7 +52794,7 @@
 			<reference>M107</reference>
 			<categories>
 				<category>Knowledge</category>
-				<category>Light &amp; Darkness</category>
+				<category>Light</category>
 			</categories>
 			<prereq_list all="yes">
 				<spell_prereq has="yes">
@@ -53257,20 +53243,6 @@
 			</prereq_list>
 		</spell>
 		<spell version="2">
-			<name>Keen @Sense@</name>
-			<college>Mind Control</college>
-			<power_source>Arcane</power_source>
-			<spell_class>Regular</spell_class>
-			<casting_cost>1/pt increase</casting_cost>
-			<maintenance_cost>Half</maintenance_cost>
-			<casting_time>1 sec</casting_time>
-			<duration>30 min</duration>
-			<reference>M133</reference>
-			<categories>
-				<category>Mind Control</category>
-			</categories>
-		</spell>
-		<spell version="2">
 			<name>Keen Hearing</name>
 			<college>Mind Control/Sound</college>
 			<power_source>Arcane</power_source>
@@ -53614,7 +53586,7 @@
 				<category>Communication</category>
 			</categories>
 			<prereq_list all="yes">
-				<attribute_prereq has="yes" which="iq" combined_with="iq" compare="at_least">11</attribute_prereq>
+				<attribute_prereq has="yes" which="iq" compare="at_least">11</attribute_prereq>
 				<spell_prereq has="yes">
 					<name compare="is">mind-sending</name>
 				</spell_prereq>
