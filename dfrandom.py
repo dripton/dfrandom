@@ -3,8 +3,12 @@
 """Generate a random GURPS Dungeon Fantasy character."""
 
 import argparse
+from collections import Counter
 import copy
+import os
 import random
+import re
+import xml.etree.ElementTree as et
 
 
 def list_levels(name, cost, num_levels, min_level=1):
@@ -116,12 +120,45 @@ def pick_or_improve_skills_from_list(skills, points, traits, min_cost=1):
 
 
 def print_traits(traits):
+    total_cost = 0
     for name, cost in traits:
+        total_cost += cost
         print "%s [%d]" % (name, cost)
+    print "total points: %d" % total_cost
 
 
 def generate_barbarian():
-    traits = []
+    traits = [
+        ("ST 17", 63),
+        ("DX 13", 60),
+        ("IQ 10", 0),
+        ("HT 13", 30),
+        ("HP 22", 9),
+        ("Will 10", 0),
+        ("Per 12", 10),
+        ("FP 13", 0),
+        ("Basic Speed 6.0", -10),
+        ("Basic Move 7", 0),
+        ("High Pain Threshold", 10),
+        ("Outdoorsman 4", 40),
+        ("Gigantism", 0),
+        ("Social Stigma (Minority Group)", -10),
+        ("Camouflage", 1),
+        ("Navigation (Land)", 2),
+        ("Tracking", 1),
+        ("Brawling", 1),
+        ("Stealth", 2),
+        ("Wrestling", 2),
+        ("Naturalist", 1),
+        ("Swimming", 1),
+        ("Hiking", 1),
+        ("Running", 1),
+        ("Fishing", 1),
+        ("Animal Handling (any)", 2),
+        ("Disguise (Animals)", 2),
+        ("Weather Sense", 2),
+        ("Intimidation", 2),
+    ]
     ads1 = [
         list_levels("ST +%d", 9, 3),
         list_levels("HT +%d", 10, 3),
@@ -238,12 +275,210 @@ def generate_barbarian():
 
 
 def generate_bard():
-    # TODO Needs wizard spell prerequisite data
-    pass
+    traits = [
+        ("ST 11", 10),
+        ("DX 12", 40),
+        ("IQ 14", 80),
+        ("HT 11", 10),
+        ("HP 11", 0),
+        ("Will 14", 0),
+        ("Per 14", 0),
+        ("FP 11", 0),
+        ("Basic Speed 6.0", 5),
+        ("Basic Move 6", 0),
+        ("Bardic Talent 2", 16),
+        ("Charisma 1", 5),
+        ("Musical Ability 2", 10),
+        ("Voice", 10),
+        ("Acting", 2),
+        ("Diplomacy", 1),
+        ("Fast-Talk", 1),
+        ("Musical Instrument (any)", 2),
+        ("Performance", 1),
+        ("Public Speaking", 1),
+        ("Singing", 1),
+        ("Fast-Draw (any)", 1),
+        ("Stealth", 2),
+        ("Current Affairs (any)", 1),
+        ("Savoir-Faire (High Society)", 1),
+        ("Interrogation", 1),
+        ("Merchant", 1),
+        ("Propaganda", 1),
+        ("Streetwise", 1),
+        ("Musical Composition", 1),
+        ("Carousing", 1),
+        ("Intimidation", 1),
+        ("Detect Lies", 1),
+        ("Heraldry", 1),
+        ("Poetry", 1),
+    ]
+
+    build_spell_prereqs()
+
+    # TODO special skill prereqs
+    special_skills = [
+        [("Hypnotism", 1)],
+        [("Musical Influence", 1)],
+        [("Persuade", 1)],
+        [("Suggest", 1)],
+        [("Sway Emotions", 1)],
+        [("Captivate", 1)],
+    ]
+
+    # TODO also special skills and spells
+    ads1 = [
+        [("Empathy (PM)", 11)],
+        [("Mimicry (PM)", 7)],
+        [("Mind Control (PM)", 35)],
+        [("Rapier Wit (PM)", 4)],
+        [("Speak With Animals (PM)", 18)],
+        [("Subsonic Speech (PM)", 7)],
+        [("Telecommunication (Telesend, PM)", 21)],
+        [("Terror (PM)", 21)],
+        [("Ultrasonic Speech (PM)", 7)],
+    ]
+    traits.extend(pick_from_list(ads1, 25))
+
+    ads2 = [
+        [("DX +1", 20)],
+        [("IQ +1", 20)],
+        list_levels("FP +%d", 3, 8),
+        [("Basic Speed +1", 20)],
+        list_levels("Acute Hearing %d", 2, 5),
+        [("Appearance: Attractive", 4), ("Appearance: Handsome", 12),
+         ("Appearance: Very Handsome", 16)],
+        list_levels("Bardic Talent %d", 8, 2, min_level=3),
+        list_levels("Charisma %d", 5, 5, min_level=2),
+        [("Cultural Adaptability", 10)],
+        [("Eidetic Memory", 5), ("Photographic Memory", 10)],
+        [("Honest Face", 1),],
+        [("Language Talent", 10),],
+        [("Language (Spoken: Accented / Written: None)", 2)],
+        [("Language (Spoken: Broken / Written: Broken)", 2)],
+        [("Language (Spoken: None / Written: Accented)", 2)],
+        [("Language (Spoken: Native / Written: None)", 3)],
+        [("Language (Spoken: Accented / Written: Broken)", 3)],
+        [("Language (Spoken: Broken / Written: Accented)", 3)],
+        [("Language (Spoken: None / Written: Native)", 3)],
+        [("Language (Spoken: Native / Written: Broken)", 4)],
+        [("Language (Spoken: Accented / Written: Accented)", 4)],
+        [("Language (Spoken: Broken / Written: Native)", 4)],
+        [("Language (Spoken: Native / Written: Accented)", 5)],
+        [("Language (Spoken: Accented / Written: Native)", 5)],
+        [("Language (Spoken: Native / Written: Native)", 6)],
+        [("Luck", 15), ("Extraordinary Luck", 30)],
+        list_levels("Musical Ability %d", 5, 2, min_level=3),
+        [("No Hangover", 1)],
+        [("Penetrating Voice", 1)],
+        list_levels("Signature Gear %d", 1, 10),
+        [("Smooth Operator 1", 15)],
+        [("Social Chameleon", 5)],
+        [("Wealth (Comfortable)", 10), ("Wealth (Wealthy)", 20)],
+        [("Wild Talent 1", 20)],
+    ]
+    ads2.extend(ads1)
+    traits.extend(pick_from_list(ads2, 25))
+
+    disads1 = [
+        list_self_control_levels2("Chummy", -5, "Gregarious", -10),
+        list_self_control_levels("Compulsive Carousing", -5),
+        list_self_control_levels("Lecherousness", -15),
+        [("Sense of Duty (Adventuring companions)", -5)],
+        list_self_control_levels("Xenophilia", -10),
+    ]
+    traits.extend(pick_from_list(disads1, -15))
+
+    disads2 = [
+        list_self_control_levels("Curious", -5),
+        list_self_control_levels("Impulsiveness", -10),
+        list_self_control_levels("Overconfidence", -5),
+        list_self_control_levels("Trickster", -15),
+    ]
+    disads2.extend(disads1)
+    traits.extend(pick_from_list(disads2, -15))
+
+    disads3 = [
+        [("Code of Honor (Gentleman's)", -10)],
+        list_self_control_levels("Compulsive Lying", -15),
+        [("Odious Personal Habit (Continuous singing or strumming)", -5)],
+        list_self_control_levels("Post-Combat Shakes", -5),
+    ]
+    disads3.extend(disads2)
+    traits.extend(pick_from_list(disads3, -20))
+
+    disads3 = [
+        list_self_control_levels("Compulsive Spending", -5),
+        list_self_control_levels("Greed", -15),
+        list_self_control_levels("Jealousy", -10),
+        [("One Eye", -15)],
+        [("Wounded", -5)],
+    ]
+    disads3.extend(disads2)
+    traits.extend(pick_from_list(disads3, -20))
+
+    skills1 = [
+        [("Rapier", 12), ("Saber", 12), ("Shortsword", 12), ("Smallsword", 12)],
+        [("Rapier", 8), ("Saber", 8), ("Shortsword", 8), ("Smallsword", 8)],
+        [("Shield (Buckler)", 4), ("Cloak", 4), ("Main-Gauche", 4)],
+    ]
+    traits.extend(pick_from_list(skills1, 12))
+
+    skills2 = [
+        [("Thrown Weapon (Knife)", 2)],
+        [("Bow", 2)],
+        [("Throwing", 2)],
+    ]
+    traits.extend(pick_from_list(skills2, 2))
+
+    skills3 = [
+        [("Climbing", 1)],
+        [("Dancing", 1)],
+        [("Acrobatics", 1)],
+        [("Slight of Hand", 1)],
+        [("First Aid", 1)],
+        [("Gesture", 1)],
+        [("Connoisseur (any)", 1)],
+        [("Disguise", 1)],
+        [("Teaching", 1)],
+        [("Writing", 1)],
+        [("Mimicry (Speech)", 1)],
+        [("Ventriloquism", 1)],
+        [("Hiking", 1)],
+        [("Sex Appeal", 1)],
+        [("Scrounging", 1)],
+        [("Observation", 1)],
+    ]
+    traits.extend(pick_from_list(skills3, 6))
+
+    return traits
 
 
 def generate_cleric():
-    traits = []
+    traits = [
+        ("ST 12", 20),
+        ("DX 12", 40),
+        ("IQ 14", 80),
+        ("HT 12", 20),
+        ("HP 12", 0),
+        ("Will 14", 0),
+        ("Per 14", 0),
+        ("FP 12", 0),
+        ("Basic Speed 6.0", 0),
+        ("Basic Move 6", 0),
+        ("Clerical Investment", 5),
+        ("Power Investiture 3", 30),
+        ("Esoteric Medicine (Holy)", 4),
+        ("Exorcism", 4),
+        ("First Aid", 1),
+        ("Occultism", 1),
+        ("Public Speaking", 1),
+        ("Teaching", 1),
+        ("Diagnosis", 1),
+        ("Theology", 1),
+        ("Religious Ritual", 1),
+        ("Surgery", 2),
+        ("Meditation", 1),
+    ]
     spells = [
         # PI 1
         [("Armor", 1)],
@@ -373,10 +608,10 @@ def generate_cleric():
         [("Language (Spoken: Accented / Written: None)", 2)],
         [("Language (Spoken: Broken / Written: Broken)", 2)],
         [("Language (Spoken: None / Written: Accented)", 2)],
-        [("Language: Spoken (Native) / Written (None)", 3)],
-        [("Language: Spoken (Accented) / Written (Broken)", 3)],
-        [("Language: Spoken (Broken) / Written (Accented)", 3)],
-        [("Language: Spoken (None) / Written (Native)", 3)],
+        [("Language (Spoken: Native / Written: None)", 3)],
+        [("Language (Spoken: Accented / Written: Broken)", 3)],
+        [("Language (Spoken: Broken / Written: Accented)", 3)],
+        [("Language (Spoken: None / Written: Native)", 3)],
         [("Language (Spoken: Native / Written: Broken)", 4)],
         [("Language (Spoken: Accented / Written: Accented)", 4)],
         [("Language (Spoken: Broken / Written: Native)", 4)],
@@ -502,7 +737,35 @@ def generate_cleric():
 
 
 def generate_druid():
-    traits = []
+    traits = [
+        ("ST 11", 10),
+        ("DX 12", 40),
+        ("IQ 14", 80),
+        ("HT 13", 30),
+        ("HP 11", 0),
+        ("Will 14", 0),
+        ("Per 14", 0),
+        ("FP 13", 0),
+        ("Basic Speed 6.0", -5),
+        ("Basic Move 6", 0),
+        ("Green Thumb 1", 5),
+        ("Power Investiture (Druidic) 3", 30),
+        ("Esoteric Medicine (Druidic)", 4),
+        ("Herb Lore", 4),
+        ("Naturalist", 2),
+        ("Camouflage", 1),
+        ("Animal Handling (any)", 1),
+        ("Disguise (Animals)", 1),
+        ("Weather Sense", 1),
+        ("Pharmacy (Herbal)", 1),
+        ("Religious Ritual (Druidic)", 1),
+        ("Theology (Druidic)", 1),
+        ("Veterinary", 1),
+        ("Climbing", 2),
+        ("Stealth", 2),
+        ("Hiking", 1),
+    ]
+
     spells = [
         # PI 1
         [("Beast-Rouser", 1)],
@@ -730,11 +993,11 @@ def generate_druid():
     for trait in traits:
         if trait in skills5:
             skills5.remove(trait)
-    traits.extend(pick_from_list(skills5, 5))
+    traits.extend(pick_from_list(skills5, 3))
 
     trait_names = set((trait[0] for trait in traits))
-    if ("Power Investiture 4" in trait_names or
-        "Power Investiture 5" in trait_names):
+    if ("Power Investiture (Druidic) 4" in trait_names or
+        "Power Investiture (Druidic) 5" in trait_names):
         spells.extend([
             [("Beast Possession", 1)],
             [("Blight", 1)],
@@ -758,7 +1021,7 @@ def generate_druid():
             [("Tide", 1)],
             [("Wither Plant", 1)],
         ])
-        if "Power Investiture 5" in trait_names:
+        if "Power Investiture (Druidic) 5" in trait_names:
             spells.extend([
                 [("Alter Terrain", 1)],
                 [("Arboreal Immurement", 1)],
@@ -773,8 +1036,37 @@ def generate_druid():
     traits.extend(pick_from_list(spells, 20))
     return traits
 
+
 def generate_holy_warrior():
-    traits = []
+    traits = [
+        ("ST 13", 30),
+        ("DX 13", 60),
+        ("IQ 12", 40),
+        ("HT 13", 30),
+        ("HP 13", 0),
+        ("Will 14", 10),
+        ("Per 12", 0),
+        ("FP 13", 0),
+        ("Basic Speed 6.0", -10),
+        ("Basic Move 6", 0),
+        ("Born War Leader 1", 5),
+        ("Holiness 2", 10),
+        ("Shtick (Foes slain personally can't rise as undead)", 1),
+        ("Exorcism", 4),
+        ("Brawling", 2),
+        ("Wrestling", 4),
+        ("Leadership", 1),
+        ("Physiology (monster type)", 4),
+        ("Psychology (monster type)", 4),
+        ("Strategy", 2),
+        ("Tactics", 2),
+        ("Intimidation", 1),
+        ("Religious Ritual", 1),
+        ("Theology", 1),
+        ("Meditation", 1),
+        ("Esoteric Medicine (Holy)", 1),
+    ]
+
     ads1 = [
         [("Higher Purpose (Slay Demons)", 5),
          ("Higher Purpose (Slay Undead)", 5)],
@@ -871,23 +1163,29 @@ def generate_holy_warrior():
     traits.extend(pick_from_list(disads3, -15))
 
     skills1 = [
+        [("Hidden Lore (Demons)", 2)],
+        [("Hidden Lore (Undead)", 2)],
+    ]
+    traits.extend(pick_from_list(skills1, 2))
+
+    skills2 = [
         [("Crossbow", 4)],
         [("Thrown Weapon (Axe/Mace)", 4)],
         [("Thrown Weapon (Spear)", 4)],
         [("Throwing", 4)],
     ]
-    traits.extend(pick_from_list(skills1, 4))
+    traits.extend(pick_from_list(skills2, 4))
 
-    skills2 = [
+    skills3 = [
         [("Axe/Mace", 12), ("Broadsword", 12), ("Spear", 12), ("Flail", 12)],
         [("Shield", 8)],
         [("Polearm", 20)],
         [("Spear", 20)],
         [("Two-Handed Sword", 20)],
     ]
-    traits.extend(pick_from_list(skills2, 20))
+    traits.extend(pick_from_list(skills3, 20))
 
-    skills3 = [
+    skills4 = [
         [("Fast-Draw (any)", 1)],
         [("Climbing", 1)],
         [("Lance", 1)],
@@ -901,12 +1199,34 @@ def generate_holy_warrior():
         [("Hiking", 1)],
         [("Observation", 1)],
     ]
-    traits.extend(pick_from_list(skills3, 1))
+    traits.extend(pick_from_list(skills4, 5))
     return traits
 
 
 def generate_knight():
-    traits = []
+    traits = [
+        ("ST 14", 40),
+        ("DX 14", 80),
+        ("IQ 10", 0),
+        ("HT 13", 30),
+        ("HP 14", 0),
+        ("Will 10", 0),
+        ("Per 10", 0),
+        ("FP 13", 0),
+        ("Basic Speed 6.0", -15),
+        ("Basic Move 6", 0),
+        ("Born War Leader 2", 10),
+        ("Combat Reflexes", 15),
+        ("High Pain Threshold", 10),
+        ("Fast-Draw (any)", 1),
+        ("Knife", 1),
+        ("Shield", 4),
+        ("Connoisseur (Weapons)", 4),
+        ("Leadership", 1),
+        ("Strategy", 2),
+        ("Tactics", 2),
+    ]
+
     ads1 = [
         list_levels("ST +%d", 10, 6),
         list_levels("DX +%d", 20, 3),
@@ -1013,10 +1333,10 @@ def generate_knight():
     traits.extend(pick_from_list(skills4, 24))
 
     skills5 = [
-        [("Armoury (Body Armor)", 1)],
-        [("Armoury (Melee Weapons)", 1)],
+        [("Armoury (Body Armor)", 4)],
+        [("Armoury (Melee Weapons)", 4)],
     ]
-    traits.extend(pick_from_list(skills5, 1))
+    traits.extend(pick_from_list(skills5, 4))
 
     skills6 = [
         [("Forced Entry", 1)],
@@ -1039,7 +1359,28 @@ def generate_knight():
 
 
 def generate_martial_artist():
-    traits = []
+    traits = [
+        ("ST 11", 10),
+        ("DX 16", 120),
+        ("IQ 10", 0),
+        ("HT 12", 20),
+        ("HP 11", 0),
+        ("Will 11", 5),
+        ("Per 10", 0),
+        ("FP 12", 0),
+        ("Basic Speed 7.0", 0),
+        ("Basic Move 8", 5),
+        ("Chi Talent 2", 30),
+        ("Trained by a Master", 30),
+        ("Disciples of Faith (Chi Rituals)", -10),
+        ("Jumping", 1),
+        ("Acrobatics", 2),
+        ("Judo", 2),
+        ("Karate", 2),
+        ("Stealth", 1),
+        ("Meditation", 2),
+        ("Tactics", 4),
+    ]
 
     special_skills = [
         [("Immovable Stance", 2)],
@@ -1139,18 +1480,6 @@ def generate_martial_artist():
     disads2.extend(disads1)
     traits.extend(pick_from_list(disads2, -15))
 
-    fixed_skills = [
-        [("Jumping", 1)],
-        [("Acrobatics", 2)],
-        [("Judo", 2)],
-        [("Karate", 2)],
-        [("Stealth", 1)],
-        [("Meditation", 2)],
-        [("Tactics", 4)],
-    ]
-    for fixed_skill in fixed_skills:
-        traits.append(fixed_skill[0])
-
     skills1 = [
         [("Thrown Weapon (Dart)", 1)],
         [("Thrown Weapon (Knife)", 1)],
@@ -1202,6 +1531,19 @@ def generate_martial_artist():
             traits.append(("Judo", 4))
             traits.append(("Karate", 8))
 
+    skills4 = [
+        [("Fast-Draw (any)", 1)],
+        [("Climbing", 1)],
+        [("First Aid", 1)],
+        [("Gesture", 1)],
+        [("Teaching", 1)],
+        [("Hiking", 1)],
+        [("Running", 1)],
+        [("Intimidation", 1)],
+        [("Observation", 1)],
+    ]
+    traits.extend(pick_from_list(skills4, 3))
+
     special_skill_names = set()
     for lst in special_skills:
         for tup in lst:
@@ -1224,7 +1566,21 @@ def generate_martial_artist():
 
 
 def generate_scout():
-    traits = []
+    traits = [
+        ("ST 13", 30),
+        ("DX 14", 80),
+        ("IQ 11", 20),
+        ("HT 12", 20),
+        ("HP 13", 0),
+        ("Will 11", 0),
+        ("Per 14", 15),
+        ("FP 12", 0),
+        ("Basic Speed 7.0", 10),
+        ("Basic Move 7", 0),
+        ("Heroic Archer", 20),
+        ("Outdoorsman 2", 20),
+    ]
+
     ads1 = [
         list_levels("ST +%d", 10, 2),
         [("DX +1", 20)],
@@ -1352,7 +1708,31 @@ def generate_scout():
 
 
 def generate_swashbuckler():
-    traits = []
+    traits = [
+        ("ST 11", 10),
+        ("DX 15", 100),
+        ("IQ 10", 0),
+        ("HT 13", 30),
+        ("HP 11", 0),
+        ("Will 10", 0),
+        ("Per 10", 0),
+        ("FP 13", 0),
+        ("Basic Speed 7.0", 0),
+        ("Basic Move 7", 0),
+        ("Combat Reflexes", 15),
+        ("Enhanced Parry (Weapon of choice) 1", 5),
+        ("Luck", 15),
+        ("Weapon Bond (Any starting weapon)", 1),
+        ("Weapon Master (Weapon of choice) 1", 20),
+        ("Jumping", 1),
+        ("Fast-Draw (Knife)", 1),
+        ("Fast-Draw (Sword)", 1),
+        ("Acrobatics", 4),
+        ("Wrestling", 2),
+        ("Stealth", 1),
+        ("Carousing", 1),
+    ]
+
     ads1 = [
         list_levels("ST +%d", 10, 6),
         list_levels("DX +%d", 20, 3),
@@ -1394,13 +1774,13 @@ def generate_swashbuckler():
         list_self_control_levels("Impulsiveness", -10),
         list_self_control_levels("Overconfidence", -5),
         list_self_control_levels("Short Attention Span", -10),
-        list_self_control_levels("Trickster", -10),
+        list_self_control_levels("Trickster", -15),
     ]
     disads2.extend(disads1)
     traits.extend(pick_from_list(disads2, -15))
 
     disads3 = [
-        list_self_control_levels2("Chummy", -5, "Gregarious)", -10),
+        list_self_control_levels2("Chummy", -5, "Gregarious", -10),
         list_self_control_levels("Compulsive Carousing", -5),
         list_self_control_levels("Compulsive Spending", -5),
         list_self_control_levels("Greed", -15),
@@ -1463,7 +1843,22 @@ def generate_swashbuckler():
 
 
 def generate_thief():
-    traits = []
+    traits = [
+        ("ST 11", 10),
+        ("DX 15", 100),
+        ("IQ 13", 60),
+        ("HT 11", 10),
+        ("HP 11", 0),
+        ("Will 13", 0),
+        ("Per 14", 5),
+        ("FP 11", 0),
+        ("Basic Speed 6.0", -10),
+        ("Basic Move 7", 5),
+        ("Flexibility", 5),
+        ("High Manual Dexterity 1", 5),
+        ("Perfect Balance", 15),
+    ]
+
     ads1 = [
         [("DX +1", 20)],
         [("IQ +1", 20)],
@@ -1594,12 +1989,749 @@ def generate_thief():
     traits.extend(pick_from_list(skills2, 1))
 
     pick_or_improve_skills_from_list(all_skills, 7, traits)
+    return traits
 
-    print_traits(traits)
+
+banned_spells = set([
+    "Accelerate Time",
+    "Create Gate",
+    "Rapid Journey",
+    "Slow Time",
+    "Suspend Time",
+    "Teleport",
+    "Teleport Other",
+    "Time Out",
+    "Timeport",
+    "Timeport Other",
+])
+
+banned_colleges = set([
+    "Enchantment",
+    "Weapon Enchantment",
+    "Armor Enchantment",
+    "Radiation",
+])
+
+restricted_colleges = set([
+    "Healing",
+    "Animal",
+    "Plant",
+    "Weather",
+])
+
+allowed_bard_colleges = set([
+    "Communication",
+    "Mind Control",
+])
 
 
+# TODO restricted colleges by template
+# TODO add bardic talent as a substitute for magery for 2 colleges
+# TODO merge Magery 4/5 with Magery 3
+# TODO merge stat +x with base stat
+# TODO case on stats like IQ
+# TODO iq combined with dx
+
+# dict of spell name to set of colleges to which it belongs
+spell_to_colleges = None
+
+# dict of spell name to a function that takes (traits, trait_names) as
+# arguments and returns True iff the prereqs are satisfied
+spell_to_prereq_function = None
+
+# gcs_library/spell_list/spell/name
+# gcs_library/spell_list/spell/categories/category
+#   (don't use college as that has things like Air/Knowledge)
+# gcs_library/spell_list/spell/prereq_list @all="yes" or "no"
+# can nest prereq_list elements  - up to 3 deep in data
+# spell_prereq @has="yes"
+#   college_count @compare="at_least"10  (if twice, 2 spells from each)
+# spell_prereq @has="yes"
+#   <college compare="contains">air</college>
+#   <quantity compare="at_least">5</college>
+#   <name compare="is">aura</college>  (lowercase)
+#   <name compare="starts with">seek power</college>
+#   <name compare="contains">lightning</college>
+# advantage_prereq @has="yes" or "no"
+#   <name compare="is">magery</name>
+#   <level compare="at_least">2</name>
+#   <notes compare="contains">one college (gate)</name>
+#   <notes compare="does not contain">one college</name>
+# bug: geyser prereqs: create well should be create spring, quantity 5
+#      should be on college water not create spring
+#      should be college earth not name earth
+
+
+# TODO Handle 2 spells from each of 10 colleges
+def count_spell_colleges(traits):
+    colleges = set()
+    for tup in traits:
+        name = tup[0]
+        if name in spell_to_colleges:
+            colleges.update(spell_to_colleges[name])
+    return len(colleges)
+
+
+def count_spells_from_each_college(traits):
+    college_count = Counter()
+    for tup in traits:
+        name = tup[0]
+        for college in spell_to_colleges.get(name, []):
+            college_count[college] += 1
+    return college_count
+
+
+def count_spells_starting_with(traits, st):
+    count = 0
+    for tup in traits:
+        name = tup[0].title()
+        if name.startswith(st.title()) and name in spell_to_colleges:
+            count += 1
+    return count
+
+
+def count_spells_containing(traits, st):
+    count = 0
+    for tup in traits:
+        name = tup[0].title()
+        if st.title() in name and name in spell_to_colleges:
+            count += 1
+    return count
+
+
+def count_spells(traits):
+    count = 0
+    for tup in traits:
+        name = tup[0].title()
+        if name in spell_to_colleges:
+            count += 1
+    return count
+
+
+def _parse_spell_prereq(el, function_name):
+    """Parse a <spell_prereq> element and its children.
+
+    Return a str of Python code that takes traits and trait_names as
+    arguments and evaluates to True iff the prereqs are satisfied.
+    """
+    if len(el) == 1:
+        child = el[0]
+        if child.tag == "name":
+            if child.get("compare") == "is":
+                return """
+def %s(traits, trait_names):
+    return '''%s''' in trait_names
+""" % (function_name, child.text.title())
+
+            elif child.get("compare") == "contains":
+                return """
+def %s(traits, trait_names):
+    for trait in trait_names:
+        if '''%s'''.title() in trait.title():
+            return True
+    return False
+""" % (function_name, child.text)
+
+            elif child.get("compare") == "starts with":
+                return """
+def %s(traits, trait_names):
+    for trait in trait_names:
+        if trait.title().startswith('''%s'''):
+            return True
+    return False
+""" % (function_name, child.text.title())
+
+        elif child.tag == "college_count":
+            if child.get("compare") == "at_least":
+                return """
+def %s(traits, trait_names):
+    count = count_spell_colleges(traits)
+    return count >= %d
+""" % (function_name, int(child.text))
+
+        elif child.tag == "college":
+
+            if child.get("compare") == "contains":
+                return """
+def %s(traits, trait_names):
+    counter = count_spells_from_each_college(traits)
+    for college, quantity in counter.iteritems():
+        if '''%s''' in college.title() and quantity >= 1:
+            return True
+    return False
+""" % (function_name, child.text.title())
+
+            elif child.get("compare") == "is":
+                return """
+def %s(traits, trait_names):
+    counter = count_spells_from_each_college(traits)
+    return counter['''%s'''] >= 1
+""" % (function_name, child.text)
+
+    elif len(el) == 2:
+        if el.find("college") is not None and el.find("quantity") is not None:
+            college_el = el.find("college")
+            quantity_el = el.find("quantity")
+            if (college_el.get("compare") == "contains" and
+              quantity_el.get("compare") == "at_least"):
+                return """
+def %s(traits, trait_names):
+    counter = count_spells_from_each_college(traits)
+    return counter['''%s'''] >= %d
+""" % (function_name, college_el.text, int(quantity_el.text))
+
+            elif (college_el.get("compare") == "is" and
+              quantity_el.get("compare") == "at_least"):
+                return """
+def %s(traits, trait_names):
+    counter = count_spells_from_each_college(traits)
+    return counter['''%s'''] >= %d
+""" % (function_name, college_el.text, int(quantity_el.text))
+
+        elif el.find("name") is not None and el.find("quantity") is not None:
+            name_el = el.find("name")
+            quantity_el = el.find("quantity")
+
+            if (name_el.get("compare") == "starts with" and
+              quantity_el.get("compare") == "at_least"):
+                return """
+def %s(traits, trait_names):
+    return count_spells_starting_with(traits, '''%s''') >= %d
+""" % (function_name, name_el.text.title(), int(quantity_el.text))
+
+            elif (name_el.get("compare") == "is" and
+              quantity_el.get("compare") == "is"):
+                return """
+def %s(traits, trait_names):
+    return '''%s''' in trait_names
+""" % (function_name, name_el.text.title())
+
+            elif (name_el.get("compare") == "contains" and
+              quantity_el.get("compare") == "at_least"):
+                return """
+def %s(traits, trait_names):
+    return count_spells_containing(traits, '''%s''') >= %d
+""" % (function_name, name_el.text.title(), int(quantity_el.text))
+
+            # XXX This will never be true.  Rider Within (@animal)
+            elif (name_el.get("compare") == "is" and
+                  quantity_el.get("compare") == "at_least"):
+                return """
+def %s(traits, trait_names):
+    count = 0
+    for trait in trait_names:
+        if trait == '''%s''':
+            count += 1
+    return count >= %d
+""" % (function_name, name_el.text.title(), int(quantity_el.text))
+
+            elif (name_el.get("compare") == "is anything" and
+                  quantity_el.get("compare") == "at_least"):
+                return """
+def %s(traits, trait_names):
+    return count_spells(traits) >= %d
+""" % (function_name, int(quantity_el.text))
+
+        elif el.find("any") is not None and el.find("quantity") is not None:
+            quantity_el = el.find("quantity")
+
+            if quantity_el.get("compare") == "at_least":
+                return """
+def %s(traits, trait_names):
+    return count_spells(traits) >= %d
+""" % (function_name, int(quantity_el.text))
+
+    assert False, "parse_spell_prereq %s" % et.tostring(el)
+
+
+def _parse_advantage_prereq(el, function_name):
+    """Parse a <advantage_prereq> element and its children.
+
+    Return a str of Python code that takes traits and trait_names as
+    arguments and evaluates to True iff the prereqs are satisfied.
+    """
+    if el.get("has") == "no":
+        if len(el) == 2:
+            name_el = el.find("name")
+            notes_el = el.find("notes")
+        if (name_el is not None and name_el.get("compare") == "starts with"
+          and notes_el is not None and notes_el.get("compare") ==
+                                                           "is anything"):
+            return """
+def %s(traits, trait_names):
+    for trait_name in trait_names:
+        if trait_name.title().startswith('''%s'''.title()):
+            return False
+    return True
+""" % (function_name, name_el.text.title())
+
+        elif (name_el is not None and name_el.get("compare") == "is"
+          and notes_el is not None and notes_el.get("compare") ==
+                                                           "is anything"):
+            return """
+def %s(traits, trait_names):
+    for trait_name in trait_names:
+        if trait_name.title() == '''%s'''.title():
+            return False
+    return True
+""" % (function_name, name_el.text.title())
+
+        elif (name_el is not None and name_el.get("compare") == "contains"
+          and notes_el is not None and notes_el.get("compare") ==
+                                                           "is anything"):
+            return """
+def %s(traits, trait_names):
+    for trait_name in trait_names:
+        if '''%s'''.title() in trait_name.title():
+            return False
+    return True
+""" % (function_name, name_el.text.title())
+
+    elif len(el) == 3:
+        name_el = el.find("name")
+        level_el = el.find("level")
+        notes_el = el.find("notes")
+        if (name_el is not None and name_el.get("compare") == "is" and
+          level_el is not None and level_el.get("compare") == "at_least" and
+          notes_el is not None and notes_el.get("compare") == "is anything"):
+            return """
+def %s(traits, trait_names):
+    for trait in trait_names:
+        if trait.startswith('''%s'''):
+            regexp = "(\d+).*$"
+            match = re.search(regexp, trait)
+            if match:
+                level = int(match.group(1))
+                return level >= int('''%s''')
+    return False
+""" % (function_name, name_el.text.title(), level_el.text)
+
+        elif (name_el is not None and name_el.get("compare") == "is" and
+          level_el is not None and level_el.get("compare") == "at_least" and
+          notes_el is not None and notes_el.get("compare") == "contains"):
+            return """
+def %s(traits, trait_names):
+    for trait in trait_names:
+        if trait.startswith('''%s''') and '''%s''' in trait:
+            regexp = "(\d+).*$"
+            match = re.search(regexp, trait)
+            if match:
+                level = int(match.group(1))
+                return level >= int('''%s''')
+    return False
+""" % (function_name, name_el.text.title(), notes_el.text, level_el.text)
+
+        elif (name_el is not None and name_el.get("compare") == "is" and
+          level_el is not None and level_el.get("compare") == "at_least" and
+          notes_el is not None and notes_el.get("compare") ==
+                                                "does not contain"):
+            return """
+def %s(traits, trait_names):
+    for trait in trait_names:
+        if trait.startswith('''%s''') and '''%s''' not in trait:
+            regexp = "(\d+).*$"
+            match = re.search(regexp, trait)
+            if match:
+                level = int(match.group(1))
+                return level >= int('''%s''')
+    return False
+""" % (function_name, name_el.text.title(), notes_el.text, level_el.text)
+
+        elif (name_el is not None and name_el.get("compare") == "contains" and
+          level_el is not None and level_el.get("compare") == "at_least" and
+          notes_el is not None and notes_el.get("compare") == "is anything"):
+            return """
+def %s(traits, trait_names):
+    for trait in trait_names:
+        if '''%s''' in trait:
+            regexp = "(\d+).*$"
+            match = re.search(regexp, trait)
+            if match:
+                level = int(match.group(1))
+                return level >= int('''%s''')
+    return False
+""" % (function_name, name_el.text.title(), level_el.text)
+
+    elif len(el) == 2:
+        name_el = el.find("name")
+        notes_el = el.find("notes")
+        if (name_el is not None and name_el.get("compare") == "is" and
+          notes_el is not None and notes_el.get("compare") == "is anything"):
+            return """
+def %s(traits, trait_names):
+    return '''%s''' in trait_names
+""" % (function_name, name_el.text.title())
+
+        elif (name_el is not None and name_el.get("compare") == "starts with"
+          and notes_el is not None and notes_el.get("compare") == "contains"):
+            return """
+def %s(traits, trait_names):
+    for trait_name in trait_names:
+        if (trait_name.title().startswith('''%s'''.title()) and
+          '''%s''' in trait_name.title()):
+            return True
+    return False
+""" % (function_name, name_el.text.title(), notes_el.text)
+
+        elif (name_el is not None and name_el.get("compare") == "contains" and
+          notes_el is not None and notes_el.get("compare") == "is anything"):
+            return """
+def %s(traits, trait_names):
+    for trait_name in trait_names:
+        if '''%s'''.title() in trait_name.title():
+            return True
+    return False
+""" % (function_name, name_el.text.title())
+
+    assert False, "parse_advantage_prereq %s" % et.tostring(el)
+
+
+# TODO Put actual attribute values in traits
+def _parse_attribute_prereq(el, function_name):
+    """Parse a <attribute_prereq> element and its children.
+
+    Return a str of Python code that takes traits and trait_names as
+    arguments and evaluates to True iff the prereqs are satisfied.
+    """
+    attr = el.get("which")
+    compare = el.get("compare")
+    level = int(el.text)
+    if compare == "at_least":
+        return """
+def %s(traits, trait_names):
+    for trait in trait_names:
+        if trait.startswith('''%s'''):
+            regexp = "(\d+).*$"
+            match = re.search(regexp, trait)
+            if match:
+                level = int(match.group(1))
+                return level >= %d
+    return False
+""" % (function_name, attr, level)
+    assert False, "parse_attribute_prereq %s" % et.tostring(el)
+
+
+def _parse_skill_prereq(el, function_name):
+    """Parse a <skill_prereq> element and its children.
+
+    Return a str of Python code that takes traits and trait_names as
+    arguments and evaluates to True iff the prereqs are satisfied.
+    """
+    if len(el) == 3:
+        name_el = el.find("name")
+        level_el = el.find("level")
+        specialization_el = el.find("specialization")
+        if (name_el is not None and name_el.get("compare") == "is" and
+          level_el is not None and level_el.get("compare") == "at_least" and
+          specialization_el is not None and specialization_el.get("compare")
+                                                            == "is anything"):
+            return """
+def %s(traits, trait_names):
+    for trait in trait_names:
+        if trait.startswith('''%s'''):
+            regexp = "(\d+).*$"
+            match = re.search(regexp, trait)
+            if match:
+                level = int(match.group(1))
+                return level >= int('''%s''')
+    return False
+""" % (function_name, name_el.text.title(), level_el.text)
+
+    elif len(el) == 2:
+        name_el = el.find("name")
+        specialization_el = el.find("specialization")
+        if (name_el is not None and name_el.get("compare") == "is" and
+          specialization_el is not None and specialization_el.get("compare")
+                                                            == "is anything"):
+            return """
+def %s(traits, trait_names):
+    return '''%s''' in trait_names
+""" % (function_name, name_el.text.title())
+
+    assert False, "parse_skill_prereq %s" % et.tostring(el)
+
+
+and_or = """
+def and_(*args):
+    for arg in args:
+        if not arg:
+            return False
+    return True
+
+
+def or_(*args):
+    for arg in args:
+        if arg:
+            return True
+    return False
+"""
+
+
+function_name_incrementor = 0
+
+
+def _parse_prereq_list(prereq_list_el, top_name):
+    global function_name_incrementor
+    sts = []
+    sts.append(and_or)
+    function_names = []
+    for child in prereq_list_el:
+        if child.tag == "prereq_list":
+            function_name = "top_%d" % function_name_incrementor
+            function_name_incrementor += 1
+            function_names.append(function_name)
+            st = _parse_prereq_list(child, function_name)
+        else:
+            function_name = "ppl_%d" % function_name_incrementor
+            function_name_incrementor += 1
+            function_names.append(function_name)
+            if child.tag == "spell_prereq":
+                st = _parse_spell_prereq(child, function_name)
+            elif child.tag == "advantage_prereq":
+                st = _parse_advantage_prereq(child, function_name)
+            elif child.tag == "attribute_prereq":
+                st = _parse_attribute_prereq(child, function_name)
+            elif child.tag == "skill_prereq":
+                st = _parse_skill_prereq(child, function_name)
+            else:
+                assert False, "unknown child tag %s" % child.tag
+        sts.append(st)
+    if prereq_list_el.get("all") == "yes":
+        joiner = "and_"
+    else:
+        joiner = "or_"
+    function_names_with_args = [
+        function_name if "top" in function_name else
+        "%s(traits, trait_names)" % function_name
+        for function_name in function_names]
+    call_line = "%s = %s(%s)" % (
+                top_name, joiner, ", ".join(function_names_with_args))
+    sts.append(call_line)
+    sts.append("")
+    blob = "\n".join(sts)
+    return blob
+
+
+def _parse_no_prereqs(prereq_list_el, top_name):
+    """Return the text of a function that always returns True."""
+    global function_name_incrementor
+    function_name = "pnp_%s" % function_name_incrementor
+    function_name_incrementor += 1
+    return """
+def %s(traits, trait_names):
+    return True
+
+%s = True""" % (function_name, top_name)
+
+
+def build_spell_prereqs():
+    """Fill in global dicts spell_to_colleges and spell_to_prereq_function."""
+    global spell_to_colleges
+    spell_to_colleges = {}
+    global spell_to_prereq_function
+    spell_to_prereq_function = {}
+    dirname = os.path.dirname(__file__)
+    filename = "Library__L.glb"
+    path = os.path.abspath(os.path.join(dirname, filename))
+    tree = et.parse(path)
+    root_el = tree.getroot()
+    spell_list_el = root_el.find("spell_list")
+    for spell_el in spell_list_el.findall("spell"):
+        name = spell_el.find("name").text
+        categories_el = spell_el.find("categories")
+        colleges = set()
+        for category_el in categories_el:
+            college = category_el.text
+            colleges.add(college)
+        spell_to_colleges[name] = colleges
+        prereq_list_el = spell_el.find("prereq_list")
+
+        global function_name_incrementor
+        top_name = "top_%d" % function_name_incrementor
+        function_name_incrementor += 1
+
+        if prereq_list_el is None:
+            blob = _parse_no_prereqs(prereq_list_el, top_name)
+        else:
+            blob = _parse_prereq_list(prereq_list_el, top_name)
+        spell_to_prereq_function[name] = blob
+
+
+def add_spell(traits, trait_names):
+    """Add one spell to traits, at the one-point level."""
+    while True:
+        spell, blob = random.choice(spell_to_prereq_function.items())
+        if spell in banned_spells:
+            continue
+        if spell in trait_names:
+            continue
+        colleges = spell_to_colleges[spell]
+        banned_college = False
+        for college in colleges:
+            if college in banned_colleges:
+                banned_college = True
+                break
+        if banned_college:
+            continue
+        lines = blob.strip().split("\n")
+        tokens = lines[-1].strip().split()
+        top_name = tokens[0]
+        nsg = globals()
+        nsl = locals()
+        exec blob in nsg, nsl
+        print "blob", blob
+        print "spell", spell, "trait_names", sorted(trait_names)
+        if nsl[top_name]:
+            traits.append((spell, 1))
+            trait_names.add(spell)
+            return
+
+
+# TODO support multiple languages
 def generate_wizard():
-    pass
+    traits = [
+        ("ST 10", 0),
+        ("DX 12", 40),
+        ("IQ 15", 100),
+        ("HT 11", 10),
+        ("HP 10", 0),
+        ("Will 15", 0),
+        ("Per 12", -15),
+        ("FP 14", 9),
+        ("Basic Speed 6.0", 5),
+        ("Basic Move 6", 0),
+        ("Magery 3", 35),
+        ("Occultism", 2),
+        ("Alchemy", 8),
+        ("Thaumatology", 1),
+        ("Hazardous Materials (Magical)", 1),
+        ("Research", 1),
+        ("Speed-Reading", 1),
+        ("Teaching", 1),
+        ("Writing", 1),
+        ("Meditation", 2),
+    ]
+
+    build_spell_prereqs()
+
+    ads1 = [
+        [("DX +1", 20)],
+        [("IQ +1", 20)],
+        list_levels("Will +%d", 5, 5),
+        list_levels("FP +%d", 3, 10),
+        [("Eidetic Memory", 5), ("Photographic Memory", 5)],
+        list_levels("Gizmos %d", 5, 3),
+        [("Intuition", 15)],
+        [("Language Talent", 10)],
+        [("Language (Spoken: Accented / Written: None)", 2)],
+        [("Language (Spoken: Broken / Written: Broken)", 2)],
+        [("Language (Spoken: None / Written: Accented)", 2)],
+        [("Language (Spoken: Native / Written: None)", 3)],
+        [("Language (Spoken: Accented / Written: Broken)", 3)],
+        [("Language (Spoken: Broken / Written: Accented)", 3)],
+        [("Language (Spoken: None / Written: Native)", 3)],
+        [("Language (Spoken: Native / Written: Broken)", 4)],
+        [("Language (Spoken: Accented / Written: Accented)", 4)],
+        [("Language (Spoken: Broken / Written: Native)", 4)],
+        [("Language (Spoken: Native / Written: Accented)", 5)],
+        [("Language (Spoken: Accented / Written: Native)", 5)],
+        [("Language (Spoken: Native / Written: Native)", 6)],
+        [("Luck", 15), ("Extraordinary Luck", 30)],
+        list_levels("Magery %d", 10, 3, min_level=4),
+        list_levels("Mind Shield %d", 4, 5),
+        list_levels("Signature Gear %d", 1, 10),
+        [("Spirit Empathy", 10)],
+        [("Wild Talent 1 (Retention, Focused, Magical)", 21)],
+    ]
+    traits.extend(pick_from_list(ads1, 30))
+
+    disads1 = [
+        list_self_control_levels("Curious", -5),
+        [("Frightens Animals", -10)],
+        list_self_control_levels(
+          "Obsession (Become the world's most powerful wizard, a lich, etc.)",
+           -10),
+        list_self_control_levels("Pyromania", -5),
+        [("Skinny", -5)],
+        [("Social Stigma (Excommunicated)", -10)],
+        [("Unfit", -5), ("Very Unfit", -15)],
+        list_levels("Unnatural Features %d", -1, 5),
+        [("Weirdness Magnet", -15)],
+    ]
+    traits.extend(pick_from_list(disads1, -15))
+
+    disads2 = [
+        [("Absent-Mindedness", -15)],
+        list_self_control_levels("Bad Temper", -10),
+        [("Clueless", -10)],
+        [("Combat Paralysis", -15)],
+        list_self_control_levels("Cowardice", -10),
+        [("Hard of Hearing", -15)],
+        [("Klutz", -5), ("Total Klutz", -15)],
+        list_self_control_levels("Loner", -5),
+        [("Low Pain Threshold", -10)],
+        [("Nervous Stomach", -1)],
+        [("Oblivious", -5)],
+        list_self_control_levels("Overconfidence", -5),
+        list_self_control_levels("Post-Combat Shakes", -5),
+        [("Sense of Duty (Adventuring companions)", -5)],
+        [("Stubbornness", -5)],
+    ]
+    disads2.extend(disads1)
+    traits.extend(pick_from_list(disads2, -20))
+
+    skills1 = [
+        [("Hidden Lore (Demons)", 2), ("Hidden Lore (Magic Items)", 2),
+         ("Hidden Lore (Magical Writings)", 2), ("Hidden Lore (Spirits)", 2)],
+    ]
+    traits.extend(pick_from_list(skills1, 2))
+
+    skills2 = [
+        [("Smallsword", 4)],
+        [("Shield (Buckler)", 4)],
+        [("Staff", 8)],
+    ]
+    traits.extend(pick_from_list(skills2, 8))
+
+    skills3 = [
+        [("Innate Attack (any)", 4)],
+        [("Thrown Weapon (Dart)", 4)],
+        [("Throwing", 4)],
+        [("Sling", 4)],
+    ]
+    traits.extend(pick_from_list(skills3, 4))
+
+    skills4 = [
+        [("Fast-Draw (Potion)", 1)],
+        [("Climbing", 1)],
+        [("Stealth", 1)],
+        [("Body Sense", 1)],
+        [("First Aid", 1)],
+        [("Gesture", 1)],
+        [("Savoir-Faire (High Society)", 1)],
+        [("Cartography", 1)],
+        [("Hidden Lore (Demons)", 1)],
+        [("Hidden Lore (Magic Items)", 1)],
+        [("Hidden Lore (Magical Writings)", 1)],
+        [("Hidden Lore (Spirits)", 1)],
+        [("Diplomacy", 1)],
+        [("Physiology (monster type)", 1)],
+        [("Strategy", 1)],
+        [("Hiking", 1)],
+        [("Scrounging", 1)],
+    ]
+    # Remove duplicate Hidden Lore
+    trait_names = set((trait[0] for trait in traits))
+    for trait_name in trait_names:
+        if (trait_name, 1) in skills4:
+            skills4.remove((trait_name, 1))
+    traits.extend(pick_from_list(skills4, 9))
+
+    trait_names = set((trait[0] for trait in traits))
+    for unused in xrange(30):
+        add_spell(traits, trait_names)
+
+    return traits
 
 
 template_to_fn = {
