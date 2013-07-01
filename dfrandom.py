@@ -2745,7 +2745,6 @@ allowed_bard_colleges = set([
 ])
 
 
-# TODO restricted colleges by template
 # TODO add bardic talent as a substitute for magery for 2 colleges
 # TODO merge Magery 4/5 with Magery 3
 # TODO merge stat +x with base stat
