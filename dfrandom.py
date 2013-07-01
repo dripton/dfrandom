@@ -3313,8 +3313,6 @@ def add_spell(traits, trait_names):
         nsg = globals()
         nsl = locals()
         exec blob in nsg, nsl
-        print "blob", blob
-        print "spell", spell, "trait_names", sorted(trait_names)
         if nsl[top_name]:
             traits.append((spell, 1))
             trait_names.add(spell)
