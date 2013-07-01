@@ -1992,20 +1992,6 @@ def generate_thief():
     return traits
 
 
-banned_spells = set([
-    "Accelerate Time",
-    "Create Gate",
-    "Rapid Journey",
-    "Slow Time",
-    "Suspend Time",
-    "Teleport",
-    "Teleport Other",
-    "Time Out",
-    "Timeport",
-    "Timeport Other",
-])
-
-
 # from http://forums.sjgames.com/showthread.php?t=110145
 allowed_spells = set([
     "Purify Air",
