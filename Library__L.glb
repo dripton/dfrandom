@@ -44440,7 +44440,7 @@
 			</prereq_list>
 		</spell>
 		<spell version="2" very_hard="yes">
-			<name>Bind Spirit (@Spirit@)</name>
+			<name>Bind Spirit</name>
 			<college>Necromancy</college>
 			<power_source>Arcane</power_source>
 			<spell_class>Regular</spell_class>
@@ -44454,7 +44454,7 @@
 			</categories>
 			<prereq_list all="yes">
 				<spell_prereq has="yes">
-					<name compare="is">command spirit (@spirit@)</name>
+					<name compare="is">command spirit</name>
 				</spell_prereq>
 				<spell_prereq has="yes">
 					<name compare="is">soul jar</name>
@@ -45998,7 +45998,7 @@
 			</prereq_list>
 		</spell>
 		<spell version="2">
-			<name>Command Spirit (@spirit@)</name>
+			<name>Command Spirit</name>
 			<college>Necromancy</college>
 			<power_source>Arcane</power_source>
 			<spell_class>Regular</spell_class>
@@ -56315,7 +56315,7 @@
 			</prereq_list>
 		</spell>
 		<spell version="2">
-			<name>Planar Summons (@Plane@)</name>
+			<name>Planar Summons</name>
 			<college>Gate</college>
 			<power_source>Arcane</power_source>
 			<spell_class>Special</spell_class>
@@ -56346,7 +56346,7 @@
 			</prereq_list>
 		</spell>
 		<spell version="2" very_hard="yes">
-			<name>Planar Visit (@Plane@)</name>
+			<name>Planar Visit</name>
 			<college>Gate</college>
 			<power_source>Arcane</power_source>
 			<spell_class>Special</spell_class>
@@ -56382,7 +56382,7 @@
 			</prereq_list>
 		</spell>
 		<spell version="2" very_hard="yes">
-			<name>Plane Shift (@Plane@)</name>
+			<name>Plane Shift</name>
 			<college>Gate</college>
 			<power_source>Arcane</power_source>
 			<spell_class>Special</spell_class>
@@ -56401,7 +56401,7 @@
 			</prereq_list>
 		</spell>
 		<spell version="2" very_hard="yes">
-			<name>Plane Shift Other (@Plane@)</name>
+			<name>Plane Shift Other</name>
 			<college>Gate</college>
 			<power_source>Arcane</power_source>
 			<spell_class>Regular</spell_class>
