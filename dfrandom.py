@@ -3251,6 +3251,8 @@ def build_spell_prereqs():
     spell_list_el = root_el.find("spell_list")
     for spell_el in spell_list_el.findall("spell"):
         name = spell_el.find("name").text
+        if name not in allowed_spells:
+            continue
         categories_el = spell_el.find("categories")
         colleges = set()
         for category_el in categories_el:
