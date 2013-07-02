@@ -239,7 +239,7 @@ def test_add_spell():
     ]
     trait_names = set([trait[0] for trait in traits])
     dfrandom.build_spell_prereqs()
-    NUM_SPELLS = 518
+    NUM_SPELLS = 425
     for unused in xrange(NUM_SPELLS):
         dfrandom.add_spell(traits, trait_names)
     assert len(traits) == len(trait_names) == NUM_SPELLS + 2
