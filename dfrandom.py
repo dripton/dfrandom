@@ -2732,12 +2732,6 @@ banned_colleges = set([
     "Radiation",
 ])
 
-restricted_colleges = set([
-    "Healing",
-    "Animal",
-    "Plant",
-    "Weather",
-])
 
 allowed_bard_colleges = set([
     "Communication",
@@ -3283,14 +3277,6 @@ def add_spell(traits, trait_names):
         if spell not in allowed_spells:
             continue
         if spell in trait_names:
-            continue
-        colleges = spell_to_colleges[spell]
-        banned_college = False
-        for college in colleges:
-            if college in banned_colleges:
-                banned_college = True
-                break
-        if banned_college:
             continue
         lines = blob.strip().split("\n")
         tokens = lines[-1].strip().split()
