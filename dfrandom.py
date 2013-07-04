@@ -76,6 +76,35 @@ def pick_from_list(lst, points):
     return traits
 
 
+def pick_from_list_enforcing_prereqs(lst, points, original_traits):
+    """Pick traits totaling exactly points from the list.
+
+    Return a list of tuples (trait name, cost)
+    lst is a list of lists of tuples (trait, cost)
+    chosen traits are removed from lst
+    """
+    original_lst = copy.deepcopy(lst)
+    traits = []
+    points_left = points
+    while lst and points_left != 0:
+        lst2 = random.choice(lst)
+        lst.remove(lst2)
+        while lst2:
+            tup = random.choice(lst2)
+            trait, cost = tup
+            if (abs(cost) <= abs(points_left) and
+              prereq_satisfied(trait, original_traits + traits)):
+                traits.append((trait, cost))
+                points_left -= cost
+                break
+            else:
+                lst2.remove(tup)
+    if points_left != 0:
+        # If we made a pick that couldn't get the points right, retry.
+        return pick_from_list(original_lst, points)
+    return traits
+
+
 def next_skill_cost(cost):
     """Return the next higher skill cost after cost."""
     if cost == 0:
@@ -313,19 +342,10 @@ def generate_bard():
         ("Poetry", 1),
     ]
 
-    build_spell_prereqs()
+    build_spell_prereqs(allowed_colleges=allowed_bard_colleges)
+    convert_magery_to_bardic_talent()
+    add_special_bard_skills_to_spell_prereqs()
 
-    # TODO special skill prereqs
-    special_skills = [
-        [("Hypnotism", 1)],
-        [("Musical Influence", 1)],
-        [("Persuade", 1)],
-        [("Suggest", 1)],
-        [("Sway Emotions", 1)],
-        [("Captivate", 1)],
-    ]
-
-    # TODO also special skills and spells
     ads1 = [
         [("Empathy (PM)", 11)],
         [("Mimicry (PM)", 7)],
@@ -337,7 +357,9 @@ def generate_bard():
         [("Terror (PM)", 21)],
         [("Ultrasonic Speech (PM)", 7)],
     ]
-    traits.extend(pick_from_list(ads1, 25))
+    for spell in spell_to_prereq_function:
+        ads1.append([(spell, 1)])
+    traits.extend(pick_from_list_enforcing_prereqs(ads1, 25, traits))
 
     ads2 = [
         [("DX +1", 20)],
@@ -406,16 +428,6 @@ def generate_bard():
     disads3.extend(disads2)
     traits.extend(pick_from_list(disads3, -20))
 
-    disads3 = [
-        list_self_control_levels("Compulsive Spending", -5),
-        list_self_control_levels("Greed", -15),
-        list_self_control_levels("Jealousy", -10),
-        [("One Eye", -15)],
-        [("Wounded", -5)],
-    ]
-    disads3.extend(disads2)
-    traits.extend(pick_from_list(disads3, -20))
-
     skills1 = [
         [("Rapier", 12), ("Saber", 12), ("Shortsword", 12), ("Smallsword", 12)],
         [("Rapier", 8), ("Saber", 8), ("Shortsword", 8), ("Smallsword", 8)],
@@ -449,6 +461,12 @@ def generate_bard():
         [("Observation", 1)],
     ]
     traits.extend(pick_from_list(skills3, 6))
+
+    special_skills = []
+    for spell in spell_to_prereq_function:
+        if (spell, 1) not in traits:
+            special_skills.append([(spell, 1)])
+    traits.extend(pick_from_list_enforcing_prereqs(special_skills, 20, traits))
 
     return traits
 
@@ -2739,7 +2757,6 @@ allowed_bard_colleges = set([
 ])
 
 
-# TODO add bardic talent as a substitute for magery for 2 colleges
 # TODO merge Magery 4/5 with Magery 3
 # TODO merge stat +x with base stat
 # TODO case on stats like IQ
@@ -3237,7 +3254,7 @@ def %s(traits, trait_names):
 %s = True""" % (function_name, top_name)
 
 
-def build_spell_prereqs():
+def build_spell_prereqs(allowed_colleges=None):
     """Fill in global dicts spell_to_colleges and spell_to_prereq_function."""
     global spell_to_colleges
     spell_to_colleges = {}
@@ -3258,6 +3275,8 @@ def build_spell_prereqs():
         for category_el in categories_el:
             college = category_el.text
             colleges.add(college)
+        if allowed_colleges and not colleges.intersection(allowed_colleges):
+            continue
         spell_to_colleges[name] = colleges
         prereq_list_el = spell_el.find("prereq_list")
 
@@ -3272,21 +3291,65 @@ def build_spell_prereqs():
         spell_to_prereq_function[name] = blob
 
 
+def add_special_bard_skills_to_spell_prereqs():
+    """Add special bard skills to spell_to_colleges and
+    spell_to_prereq_function."""
+    global spell_to_colleges
+    global spell_to_prereq_function
+    special_skills = set(["Hypnotism", "Musical Influence", "Persuade",
+        "Suggest", "Sway Emotions", "Captivate"])
+    dirname = os.path.dirname(__file__)
+    filename = "Library__L.glb"
+    path = os.path.abspath(os.path.join(dirname, filename))
+    tree = et.parse(path)
+    root_el = tree.getroot()
+    skill_list_el = root_el.find("skill_list")
+    for skill_el in skill_list_el.findall("spell"):
+        name = skill_el.find("name").text
+        if name not in special_skills:
+            continue
+        prereq_list_el = skill_el.find("prereq_list")
+        global function_name_incrementor
+        top_name = "top_%d" % function_name_incrementor
+        function_name_incrementor += 1
+        if prereq_list_el is None:
+            blob = _parse_no_prereqs(prereq_list_el, top_name)
+        else:
+            blob = _parse_prereq_list(prereq_list_el, top_name)
+        spell_to_prereq_function[name] = blob
+
+
+def convert_magery_to_bardic_talent():
+    """Bards treat Bardic Talent as Magery for their prereqs."""
+    global spell_to_prereq_function
+    for spell, blob in spell_to_prereq_function.items():
+        if "magery" in blob:
+            blob2 = blob.replace("magery", "bardic talent")
+            spell_to_prereq_function[spell] = blob2
+
+
+def prereq_satisfied(spell, traits):
+    """Return True iff any prereqs for spell are satisfied."""
+    trait_names = set((trait[0] for trait in traits))
+    blob = spell_to_prereq_function.get(spell)
+    if blob is None:
+        return True
+    lines = blob.strip().split("\n")
+    tokens = lines[-1].strip().split()
+    top_name = tokens[0]
+    nsg = globals()
+    nsl = locals()
+    exec blob in nsg, nsl
+    return bool(nsl[top_name])
+
+
 def add_spell(traits, trait_names):
     """Add one spell to traits, at the one-point level."""
     while True:
-        spell, blob = random.choice(spell_to_prereq_function.items())
-        if spell not in allowed_spells:
-            continue
+        spell = random.choice(spell_to_prereq_function.keys())
         if spell in trait_names:
             continue
-        lines = blob.strip().split("\n")
-        tokens = lines[-1].strip().split()
-        top_name = tokens[0]
-        nsg = globals()
-        nsl = locals()
-        exec blob in nsg, nsl
-        if nsl[top_name]:
+        if prereq_satisfied(spell, traits):
             traits.append((spell, 1))
             trait_names.add(spell)
             return
