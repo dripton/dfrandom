@@ -3507,9 +3507,9 @@ template_to_fn = {
     "bard": generate_bard,
     "cleric": generate_cleric,
     "druid": generate_druid,
-    "holy warrior": generate_holy_warrior,
+    "holy_warrior": generate_holy_warrior,
     "knight": generate_knight,
-    "martial artist": generate_martial_artist,
+    "martial_artist": generate_martial_artist,
     "scout": generate_scout,
     "swashbuckler": generate_swashbuckler,
     "thief": generate_thief,
@@ -3522,8 +3522,11 @@ templates = sorted(template_to_fn.iterkeys())
 def main():
     parser = argparse.ArgumentParser(description=
       "Generate a random GURPS Dungeon Fantasy character")
-    parser.add_argument("--template", "-t", help="Character template to use",
-                        default="random")
+    parser.add_argument("--template", "-t",
+      help="Character template to use (barbarian, bard, cleric, druid, "
+           "holy_warrior, knight, martial_artist, scout, swashbuckler, "
+           "thief, wizard",
+      default="random")
     args = parser.parse_args()
     template = args.template.lower()
     if template == "random":

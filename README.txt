@@ -11,10 +11,14 @@ python dfrandom.py
 
 will give you a random character from a random template.
 
-python dfrandom.py -t "holy warrior"
+python dfrandom.py -t holy_warrior
 
-will give you a random holy warrior.  (The quotes are only needed for
-template names that contain spaces.)
+will give you a random holy warrior.  (The underscore is there to avoid
+issues with spaces on the command line.)
+
+python dfrandom.py -h
+
+will give you help.
 
 Note that a random character is unlikely to be a very good character.  But
 it might provide a decent starting point.
