@@ -3116,7 +3116,6 @@ def %s(traits, trait_names):
     assert False, "parse_advantage_prereq %s" % et.tostring(el)
 
 
-# TODO Put actual attribute values in traits
 def _parse_attribute_prereq(el, function_name):
     """Parse a <attribute_prereq> element and its children.
 
