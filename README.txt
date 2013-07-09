@@ -3,7 +3,8 @@ all of the templates from GURPS Dungeon Fantasy 1: Adventurers.  It doesn't
 support anything from the other books yet.
 
 You need Python 2.7 (not Python 3) installed.  This program doesn't need
-anything else, just libraries that come with Python.
+anything else, just libraries that come with Python.  (But if you want
+to run the unit tests, you need py.test)
 
 Usage:
 
