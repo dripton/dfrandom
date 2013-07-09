@@ -471,6 +471,58 @@ def generate_bard():
     return traits
 
 
+def merge_traits(traits):
+    """Merge traits like "ST 12" and "ST +2" or "Magery 3" and "Magery 4".
+
+    Return a new traits list of (name, cost) tuples.
+    """
+    bare_name_to_level = {}
+    bare_name_to_cost = {}
+    trait_name_to_bare_name = {}
+    plus_pat = "(.*) \+(\d+)$"
+    level_pat = "(.*) ([0-9.]+)$"
+    for trait_name, cost in traits:
+        # Look for trait names like "ST +2"
+        match = re.search(plus_pat, trait_name)
+        if match:
+            bare_name = match.group(1)
+            plus_level = int(match.group(2))
+            bare_name_to_level[bare_name] += plus_level
+            bare_name_to_cost[bare_name] += cost
+            trait_name_to_bare_name[trait_name] = bare_name
+        else:
+            # Look for trait names like "Magery 3" or "Basic Speed 6.5"
+            match = re.search(level_pat, trait_name)
+            if match:
+                bare_name = match.group(1)
+                str_level = match.group(2)
+                if "." in str_level:
+                    level = float(str_level)
+                else:
+                    level = int(str_level)
+                bare_name_to_level[bare_name] = max(bare_name_to_level.get(
+                  bare_name, 0), level)
+                bare_name_to_cost[bare_name] = bare_name_to_cost.get(
+                  bare_name, 0) + cost
+                trait_name_to_bare_name[trait_name] = bare_name
+
+    traits2 = []
+    bare_names_done = set()
+    for trait_name, cost in traits:
+        bare_name = trait_name_to_bare_name.get(trait_name)
+        if bare_name in bare_names_done:
+            pass
+        elif bare_name is None:
+            traits2.append((trait_name, cost))
+        else:
+            level = bare_name_to_level[bare_name]
+            trait_name2 = "%s %d" % (bare_name, level)
+            cost2 = bare_name_to_cost[bare_name]
+            traits2.append((trait_name2, cost2))
+            bare_names_done.add(bare_name)
+    return traits2
+
+
 def generate_cleric():
     traits = [
         ("ST 12", 20),
@@ -2757,8 +2809,6 @@ allowed_bard_colleges = set([
 ])
 
 
-# TODO merge Magery 4/5 with Magery 3
-# TODO merge stat +x with base stat
 # TODO case on stats like IQ
 # TODO iq combined with dx
 
@@ -3536,6 +3586,7 @@ def main():
     print template.title()
     fn = template_to_fn[template]
     traits = fn()
+    traits = merge_traits(traits)
     print_traits(traits)
 
 

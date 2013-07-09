@@ -243,3 +243,19 @@ def test_add_spell():
     for unused in xrange(NUM_SPELLS):
         dfrandom.add_spell(traits, trait_names)
     assert len(traits) == len(trait_names) == NUM_SPELLS + 2
+
+
+def test_merge_traits_attr():
+    traits = [
+        ("ST 14", 40),
+        ("ST +2", 20),
+    ]
+    assert dfrandom.merge_traits(traits) == [("ST 16", 60)]
+
+
+def test_merge_traits_advantage():
+    traits = [
+        ("Magery 3", 35),
+        ("Magery 4", 10),
+    ]
+    assert dfrandom.merge_traits(traits) == [("Magery 4", 45)]
