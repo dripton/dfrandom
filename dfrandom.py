@@ -19,7 +19,7 @@ def list_levels(name, cost, num_levels, min_level=1):
     cost is per level
     """
     lst = []
-    for level in xrange(min_level, min_level + num_levels):
+    for level in range(min_level, min_level + num_levels):
         tup = (name % level, cost * level)
         lst.append(tup)
     return lst
@@ -152,8 +152,8 @@ def print_traits(traits):
     total_cost = 0
     for name, cost in traits:
         total_cost += cost
-        print "%s [%d]" % (name, cost)
-    print "total points: %d" % total_cost
+        print("%s [%d]" % (name, cost))
+    print("total points: %d" % total_cost)
 
 
 def generate_barbarian():
@@ -2935,7 +2935,7 @@ def %s(traits, trait_names):
                 return """
 def %s(traits, trait_names):
     counter = count_spells_from_each_college(traits)
-    for college, quantity in counter.iteritems():
+    for college, quantity in counter.items():
         if '''%s''' in college.title() and quantity >= 1:
             return True
     return False
@@ -3388,14 +3388,14 @@ def prereq_satisfied(spell, traits):
     top_name = tokens[0]
     nsg = globals()
     nsl = locals()
-    exec blob in nsg, nsl
+    exec(blob, nsg, nsl)
     return bool(nsl[top_name])
 
 
 def add_spell(traits, trait_names):
     """Add one spell to traits, at the one-point level."""
     while True:
-        spell = random.choice(spell_to_prereq_function.keys())
+        spell = random.choice(list(spell_to_prereq_function.keys()))
         if spell in trait_names:
             continue
         if prereq_satisfied(spell, traits):
@@ -3405,6 +3405,7 @@ def add_spell(traits, trait_names):
 
 
 # TODO support multiple languages
+# TODO effect of Language Talent
 def generate_wizard():
     traits = [
         ("ST 10", 0),
@@ -3545,7 +3546,7 @@ def generate_wizard():
     traits.extend(pick_from_list(skills4, 9))
 
     trait_names = set((trait[0] for trait in traits))
-    for unused in xrange(30):
+    for unused in range(30):
         add_spell(traits, trait_names)
 
     return traits
@@ -3565,7 +3566,7 @@ template_to_fn = {
     "wizard": generate_wizard,
 }
 
-templates = sorted(template_to_fn.iterkeys())
+templates = sorted(template_to_fn.keys())
 
 
 def main():
@@ -3583,7 +3584,7 @@ def main():
     if template not in templates:
         raise argparse.ArgumentTypeError("Invalid template; must be one of %s"
           % ", ".join(templates + ["random"]))
-    print template.title()
+    print(template.title())
     fn = template_to_fn[template]
     traits = fn()
     traits = merge_traits(traits)
