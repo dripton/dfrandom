@@ -2843,7 +2843,6 @@ spell_to_prereq_function = None
 #      should be college earth not name earth
 
 
-# TODO Handle 2 spells from each of 10 colleges
 def count_spell_colleges(traits):
     colleges = set()
     for tup in traits:
