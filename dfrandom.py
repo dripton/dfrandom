@@ -3437,7 +3437,7 @@ def generate_wizard():
         [("IQ +1", 20)],
         list_levels("Will +%d", 5, 5),
         list_levels("FP +%d", 3, 10),
-        [("Eidetic Memory", 5), ("Photographic Memory", 5)],
+        [("Eidetic Memory", 5), ("Photographic Memory", 10)],
         list_levels("Gizmos %d", 5, 3),
         [("Intuition", 15)],
         [("Language Talent", 10)],
