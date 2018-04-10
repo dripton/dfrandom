@@ -61,7 +61,7 @@ def test_parse_attribute_prereq():
 """
 def f1(traits, trait_names):
     for trait in trait_names:
-        if trait.startswith('''iq'''):
+        if trait.startswith('''IQ '''):
             regexp = "(\d+).*$"
             match = re.search(regexp, trait)
             if match:
@@ -182,7 +182,7 @@ def ppl_2(traits, trait_names):
 
 def ppl_3(traits, trait_names):
     for trait in trait_names:
-        if trait.startswith('''iq'''):
+        if trait.startswith('''IQ '''):
             regexp = "(\d+).*$"
             match = re.search(regexp, trait)
             if match:

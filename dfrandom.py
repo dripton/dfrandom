@@ -2813,8 +2813,6 @@ allowed_bard_colleges = set([
 ])
 
 
-# TODO case on stats like IQ
-
 # dict of spell name to set of colleges to which it belongs
 spell_to_colleges = None
 
@@ -3182,14 +3180,14 @@ def _parse_attribute_prereq(el, function_name):
         return """
 def %s(traits, trait_names):
     for trait in trait_names:
-        if trait.startswith('''%s'''):
+        if trait.startswith('''%s '''):
             regexp = "(\d+).*$"
             match = re.search(regexp, trait)
             if match:
                 level = int(match.group(1))
                 return level >= %d
     return False
-""" % (function_name, attr, level)
+""" % (function_name, attr.upper(), level)
     assert False, "parse_attribute_prereq %s" % et.tostring(el)
 
 
