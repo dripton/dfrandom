@@ -2814,7 +2814,6 @@ allowed_bard_colleges = set([
 
 
 # TODO case on stats like IQ
-# TODO iq combined with dx
 
 # dict of spell name to set of colleges to which it belongs
 spell_to_colleges = None
