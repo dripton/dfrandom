@@ -3577,7 +3577,7 @@ def main():
     parser.add_argument("--template", "-t",
       help="Character template to use (barbarian, bard, cleric, druid, "
            "holy_warrior, knight, martial_artist, scout, swashbuckler, "
-           "thief, wizard",
+           "thief, wizard)",
       default="random")
     args = parser.parse_args()
     template = args.template.lower()
