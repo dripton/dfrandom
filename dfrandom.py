@@ -1633,7 +1633,7 @@ def generate_martial_artist():
                 traits.remove((name, cost))
                 break
         remaining_special_skill_names = list(special_skill_names - trait_names -
-                                             set(["Flying Leap"]))
+                                             {"Flying Leap"})
         name2 = random.choice(remaining_special_skill_names)
         traits.append((name2, cost))
     return traits
@@ -2067,7 +2067,7 @@ def generate_thief():
 
 
 # from http://forums.sjgames.com/showthread.php?t=110145
-allowed_spells = set([
+allowed_spells = {
     "Purify Air",
     "Seek Air",
     "Create Air",
@@ -2796,21 +2796,21 @@ allowed_spells = set([
     "Lightning Armor",
     "Lightning Weapon",
     "Lightning Missiles",
-])
+}
 
 
-banned_colleges = set([
+banned_colleges = {
     "Enchantment",
     "Weapon Enchantment",
     "Armor Enchantment",
     "Radiation",
-])
+}
 
 
-allowed_bard_colleges = set([
+allowed_bard_colleges = {
     "Communication",
     "Mind Control",
-])
+}
 
 
 # dict of spell name to set of colleges to which it belongs
@@ -3345,8 +3345,8 @@ def add_special_bard_skills_to_spell_prereqs():
     spell_to_prereq_function."""
     global spell_to_colleges
     global spell_to_prereq_function
-    special_skills = set(["Hypnotism", "Musical Influence", "Persuade",
-        "Suggest", "Sway Emotions", "Captivate"])
+    special_skills = {"Hypnotism", "Musical Influence", "Persuade",
+        "Suggest", "Sway Emotions", "Captivate"}
     dirname = os.path.dirname(__file__)
     filename = "Library__L.glb"
     path = os.path.abspath(os.path.join(dirname, filename))
