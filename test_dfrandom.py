@@ -246,15 +246,15 @@ def test_add_spell():
 
 def test_merge_traits_attr():
     traits = [
-        ("ST 14", 40),
-        ("ST +2", 20),
+        ("ST 14", 40, dfrandom.PA),
+        ("ST +2", 20, dfrandom.PA),
     ]
-    assert dfrandom.merge_traits(traits) == [("ST 16", 60)]
+    assert dfrandom.merge_traits(traits) == [("ST 16", 60, dfrandom.PA)]
 
 
 def test_merge_traits_advantage():
     traits = [
-        ("Magery 3", 35),
-        ("Magery 4", 10),
+        ("Magery 3", 35, dfrandom.AD),
+        ("Magery 4", 10, dfrandom.AD),
     ]
-    assert dfrandom.merge_traits(traits) == [("Magery 4", 45)]
+    assert dfrandom.merge_traits(traits) == [("Magery 4", 45, dfrandom.AD)]
