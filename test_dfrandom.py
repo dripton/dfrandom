@@ -1,4 +1,4 @@
-# py.test
+#/usr/bin/env pytest-3
 
 import xml.etree.ElementTree as et
 
@@ -39,7 +39,6 @@ def test_parse_advantage_prereq():
 </advantage_prereq>
 """
     el = et.fromstring(xml)
-    print dfrandom._parse_advantage_prereq(el, "f1")
     assert dfrandom._parse_advantage_prereq(el, "f1") == \
 """
 def f1(traits, trait_names):
@@ -240,7 +239,7 @@ def test_add_spell():
     trait_names = set([trait[0] for trait in traits])
     dfrandom.build_spell_prereqs()
     NUM_SPELLS = 425
-    for unused in xrange(NUM_SPELLS):
+    for unused in range(NUM_SPELLS):
         dfrandom.add_spell(traits, trait_names)
     assert len(traits) == len(trait_names) == NUM_SPELLS + 2
 
