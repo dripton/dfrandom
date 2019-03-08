@@ -149,6 +149,10 @@ def pick_or_improve_skills_from_list(skills, points, traits, min_cost=1):
             points_left -= cost2
 
 
+# TODO trait type headings: attributes, advantages, disads, skills, spells
+# Unfortunately there are some trait names that are reused across types
+# (like Climbing is both a skill and a spell), so we need to go back and
+# tag all traits by type
 def print_traits(traits):
     total_cost = 0
     for name, cost in traits:
@@ -3406,6 +3410,7 @@ def add_spell(traits, trait_names):
 
 
 # TODO support multiple languages
+# Maybe language as leveled 1-30 or 2-30, then split it up
 # TODO effect of Language Talent
 def generate_wizard():
     traits = [
