@@ -1495,6 +1495,7 @@ def generate_knight():
     return traits
 
 
+# TODO Find the bug where sometimes we only use 236/250 points
 def generate_martial_artist():
     traits = [
         ("ST 11", 10, PA),
