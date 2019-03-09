@@ -1,4 +1,4 @@
-#/usr/bin/env pytest-3
+# /usr/bin/env pytest-3
 
 import xml.etree.ElementTree as et
 
@@ -11,11 +11,13 @@ def test_parse_spell_prereq_name_is():
     <name compare="is">light</name>
 </spell_prereq>"""
     el = et.fromstring(xml)
-    assert dfrandom._parse_spell_prereq(el, "f1") == \
-"""
+    assert (
+        dfrandom._parse_spell_prereq(el, "f1")
+        == """
 def f1(traits, trait_names):
     return '''Light''' in trait_names
 """
+    )
 
 
 def test_parse_spell_prereq_name_college_count():
@@ -24,12 +26,15 @@ def test_parse_spell_prereq_name_college_count():
 </spell_prereq>
 """
     el = et.fromstring(xml)
-    assert dfrandom._parse_spell_prereq(el, "f1") == \
-"""
+    assert (
+        dfrandom._parse_spell_prereq(el, "f1")
+        == """
 def f1(traits, trait_names):
     count = count_spell_colleges(traits)
     return count >= 10
 """
+    )
+
 
 def test_parse_advantage_prereq():
     xml = """<advantage_prereq has="yes">
@@ -39,8 +44,9 @@ def test_parse_advantage_prereq():
 </advantage_prereq>
 """
     el = et.fromstring(xml)
-    assert dfrandom._parse_advantage_prereq(el, "f1") == \
-"""
+    assert (
+        dfrandom._parse_advantage_prereq(el, "f1")
+        == """
 def f1(traits, trait_names):
     for trait in trait_names:
         if trait.startswith('''Magery'''):
@@ -51,13 +57,15 @@ def f1(traits, trait_names):
                 return level >= int('''3''')
     return False
 """
+    )
 
 
 def test_parse_attribute_prereq():
     xml = '<attribute_prereq has="yes" which="iq" compare="at_least">13</attribute_prereq>'
     el = et.fromstring(xml)
-    assert dfrandom._parse_attribute_prereq(el, "f1") == \
-"""
+    assert (
+        dfrandom._parse_attribute_prereq(el, "f1")
+        == """
 def f1(traits, trait_names):
     for trait in trait_names:
         if trait.startswith('''IQ '''):
@@ -68,10 +76,11 @@ def f1(traits, trait_names):
                 return level >= 13
     return False
 """
+    )
 
 
 def test_parse_prereq_list():
-    xml ="""
+    xml = """
 <prereq_list all="no">
     <advantage_prereq has="yes">
         <name compare="is">Magery</name>
@@ -87,7 +96,9 @@ def test_parse_prereq_list():
     el = et.fromstring(xml)
     top_name = "top_0"
     dfrandom.function_name_incrementor = 1
-    assert dfrandom._parse_prereq_list(el, top_name) == """
+    assert (
+        dfrandom._parse_prereq_list(el, top_name)
+        == """
 def and_(*args):
     for arg in args:
         if not arg:
@@ -125,6 +136,7 @@ def ppl_2(traits, trait_names):
 
 top_0 = or_(ppl_1(traits, trait_names), ppl_2(traits, trait_names))
 """
+    )
 
 
 def test_parse_prereq_list2():
@@ -154,7 +166,9 @@ def test_parse_prereq_list2():
     el = et.fromstring(xml)
     top_name = "top_0"
     dfrandom.function_name_incrementor = 1
-    assert dfrandom._parse_prereq_list(el, top_name) == """
+    assert (
+        dfrandom._parse_prereq_list(el, top_name)
+        == """
 def and_(*args):
     for arg in args:
         if not arg:
@@ -229,13 +243,11 @@ top_4 = or_(ppl_5(traits, trait_names), ppl_6(traits, trait_names))
 
 top_0 = and_(ppl_1(traits, trait_names), ppl_2(traits, trait_names), ppl_3(traits, trait_names), top_4)
 """
+    )
 
 
 def test_add_spell():
-    traits = [
-        ("IQ 15", 100),
-        ("Magery 3", 35),
-    ]
+    traits = [("IQ 15", 100), ("Magery 3", 35)]
     trait_names = set([trait[0] for trait in traits])
     dfrandom.build_spell_prereqs()
     NUM_SPELLS = 425
@@ -245,16 +257,10 @@ def test_add_spell():
 
 
 def test_merge_traits_attr():
-    traits = [
-        ("ST 14", 40, dfrandom.PA),
-        ("ST +2", 20, dfrandom.PA),
-    ]
+    traits = [("ST 14", 40, dfrandom.PA), ("ST +2", 20, dfrandom.PA)]
     assert dfrandom.merge_traits(traits) == [("ST 16", 60, dfrandom.PA)]
 
 
 def test_merge_traits_advantage():
-    traits = [
-        ("Magery 3", 35, dfrandom.AD),
-        ("Magery 4", 10, dfrandom.AD),
-    ]
+    traits = [("Magery 3", 35, dfrandom.AD), ("Magery 4", 10, dfrandom.AD)]
     assert dfrandom.merge_traits(traits) == [("Magery 4", 45, dfrandom.AD)]
