@@ -169,16 +169,54 @@ def pick_or_improve_skills_from_list(skills, points, traits, min_cost=1):
             points_left -= cost2
 
 
-# TODO trait type headings: attributes, advantages, disads, skills, spells
-# Unfortunately there are some trait names that are reused across types
-# (like Climbing is both a skill and a spell), so we need to go back and
-# tag all traits by type
 def print_traits(traits):
     total_cost = 0
+
+    # Print primary and secondary attributes in fixed order
+
+    print("\nPrimary Attributes")
     for name, cost, trait_type in traits:
-        total_cost += cost
-        print("%s [%d], %s" % (name, cost, trait_type))
-    print("total points: %d" % total_cost)
+        if trait_type == PA:
+            total_cost += cost
+            print("%s [%d]" % (name, cost))
+
+    print("\nSecondary Attributes")
+    for name, cost, trait_type in traits:
+        if trait_type == SA:
+            total_cost += cost
+            print("%s [%d]" % (name, cost))
+
+    # Print the rest in sorted order
+    traits = sorted(traits)
+
+    print("\nAdvantages")
+    for name, cost, trait_type in traits:
+        if trait_type == AD:
+            total_cost += cost
+            print("%s [%d]" % (name, cost))
+
+    print("\nDisadvantages")
+    for name, cost, trait_type in traits:
+        if trait_type == DI:
+            total_cost += cost
+            print("%s [%d]" % (name, cost))
+
+    print("\nSkills")
+    for name, cost, trait_type in traits:
+        if trait_type == SK:
+            total_cost += cost
+            print("%s [%d]" % (name, cost))
+
+    printed_spells_header = False
+    for name, cost, trait_type in traits:
+        if trait_type == SP:
+            if not printed_spells_header:
+                print("\nSpells")
+                printed_spells_header = True
+            total_cost += cost
+            print("%s [%d]" % (name, cost))
+
+    print("\ntotal points: %d" % total_cost)
 
 
 def generate_barbarian():
