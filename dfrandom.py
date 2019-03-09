@@ -172,6 +172,27 @@ def pick_or_improve_skills_from_list(skills, points, traits, min_cost=1):
             points_left -= cost2
 
 
+def fix_language_talent(traits):
+    """If traits includes Language Talent and any Language, fix the language's
+    proficiency level or cost to take it into account."""
+    trait_names = set((tup[0] for tup in traits))
+    if "Language Talent" in trait_names:
+        for ii, (trait_name, cost, trait_type) in enumerate(traits):
+            if "Spoken: Broken" in trait_name:
+                trait_name = trait_name.replace("Spoken: Broken", "Spoken: Accented")
+            elif "Spoken: Accented" in trait_name:
+                trait_name = trait_name.replace("Spoken: Accented", "Spoken: Native")
+            elif "Spoken: Native" in trait_name:
+                cost -= 1
+            if "Written: Broken" in trait_name:
+                trait_name = trait_name.replace("Written: Broken", "Written: Accented")
+            elif "Written: Accented" in trait_name:
+                trait_name = trait_name.replace("Written: Accented", "Written: Native")
+            elif "Written: Native" in trait_name:
+                cost -= 1
+            traits[ii] = (trait_name, cost, trait_type)
+
+
 def print_traits(traits):
     total_cost = 0
 
@@ -476,6 +497,9 @@ def generate_bard():
     ]
     ads2.extend(ads1)
     traits.extend(pick_from_list(ads2, 25))
+
+    fix_language_talent(traits)
+    # TODO If that lowered any costs take more advantages
 
     disads1 = [
         list_self_control_levels2("Chummy", -5, "Gregarious", -10),
@@ -3818,7 +3842,6 @@ def add_spell(traits, trait_names):
 
 # TODO support multiple languages
 # Maybe language as leveled 1-30 or 2-30, then split it up
-# TODO effect of Language Talent
 def generate_wizard():
     traits = [
         ("ST 10", 0, PA),
@@ -3877,6 +3900,9 @@ def generate_wizard():
         [("Wild Talent 1 (Retention, Focused, Magical)", 21, AD)],
     ]
     traits.extend(pick_from_list(ads1, 30))
+
+    fix_language_talent(traits)
+    # TODO If that lowered any costs take more advantages
 
     disads1 = [
         list_self_control_levels("Curious", -5),
