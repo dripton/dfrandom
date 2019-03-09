@@ -485,7 +485,7 @@ def generate_bard():
         [("Language (Spoken: Native / Written: Accented)", 5, AD)],
         [("Language (Spoken: Accented / Written: Native)", 5, AD)],
         [("Language (Spoken: Native / Written: Native)", 6, AD)],
-        [("Luck", 15), ("Extraordinary Luck", 30, AD)],
+        [("Luck", 15, AD), ("Extraordinary Luck", 30, AD)],
         list_levels("Musical Ability %d", 5, AD, 2, min_level=3),
         [("No Hangover", 1, AD)],
         [("Penetrating Voice", 1, AD)],
