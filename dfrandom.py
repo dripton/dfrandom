@@ -179,15 +179,23 @@ def fix_language_talent(traits):
     if "Language Talent" in trait_names:
         for ii, (trait_name, cost, trait_type) in enumerate(traits):
             if "Spoken: Broken" in trait_name:
-                trait_name = trait_name.replace("Spoken: Broken", "Spoken: Accented")
+                trait_name = trait_name.replace(
+                    "Spoken: Broken", "Spoken: Accented"
+                )
             elif "Spoken: Accented" in trait_name:
-                trait_name = trait_name.replace("Spoken: Accented", "Spoken: Native")
+                trait_name = trait_name.replace(
+                    "Spoken: Accented", "Spoken: Native"
+                )
             elif "Spoken: Native" in trait_name:
                 cost -= 1
             if "Written: Broken" in trait_name:
-                trait_name = trait_name.replace("Written: Broken", "Written: Accented")
+                trait_name = trait_name.replace(
+                    "Written: Broken", "Written: Accented"
+                )
             elif "Written: Accented" in trait_name:
-                trait_name = trait_name.replace("Written: Accented", "Written: Native")
+                trait_name = trait_name.replace(
+                    "Written: Accented", "Written: Native"
+                )
             elif "Written: Native" in trait_name:
                 cost -= 1
             traits[ii] = (trait_name, cost, trait_type)
