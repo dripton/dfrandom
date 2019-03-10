@@ -11,6 +11,8 @@ from enum import Enum, auto
 import os
 import random
 import re
+from typing import Dict, List, Set, Tuple
+import typing
 import xml.etree.ElementTree as et
 
 
@@ -33,7 +35,13 @@ SK = TraitType.SKILL
 SP = TraitType.SPELL
 
 
-def list_levels(name, cost, trait_type, num_levels, min_level=1):
+def list_levels(
+    name: str,
+    cost: int,
+    trait_type: TraitType,
+    num_levels: int,
+    min_level: int = 1,
+) -> List[Tuple[str, int, TraitType]]:
     """Return a list of num_levels tuples, each with the name,
     cost, and trait_type of that level.
 
@@ -47,7 +55,9 @@ def list_levels(name, cost, trait_type, num_levels, min_level=1):
     return lst
 
 
-def list_self_control_levels(name, base_cost):
+def list_self_control_levels(
+    name: str, base_cost: int
+) -> List[Tuple[str, int, TraitType]]:
     """Return a list of num_levels tuples, each with the name,
     cost, and trait_type (always DI) of that level.
 
@@ -62,7 +72,9 @@ def list_self_control_levels(name, base_cost):
     return lst
 
 
-def list_self_control_levels2(name1, base_cost1, name2, base_cost2):
+def list_self_control_levels2(
+    name1: str, base_cost1: int, name2: str, base_cost2: int
+) -> List[Tuple[str, int, TraitType]]:
     """Return a list of num_levels tuples, each with the name and
     cost of that level, for two mutually-exclusive disads.
     """
@@ -71,11 +83,11 @@ def list_self_control_levels2(name1, base_cost1, name2, base_cost2):
     ) + list_self_control_levels(name2, base_cost2)
 
 
-def pick_from_list(lst, points):
+def pick_from_list(
+    lst: List[List[Tuple[str, int, TraitType]]], points: int
+) -> List[Tuple[str, int, TraitType]]:
     """Pick traits totaling exactly points from the list.
 
-    Return a list of tuples (trait name, cost)
-    lst is a list of lists of tuples (trait, cost)
     chosen traits are removed from lst
     """
     original_lst = copy.deepcopy(lst)
@@ -99,15 +111,18 @@ def pick_from_list(lst, points):
     return traits
 
 
-def pick_from_list_enforcing_prereqs(lst, points, original_traits):
+def pick_from_list_enforcing_prereqs(
+    lst: List[List[Tuple[str, int, TraitType]]],
+    points: int,
+    original_traits: List[Tuple[str, int, TraitType]],
+) -> List[Tuple[str, int, TraitType]]:
     """Pick traits totaling exactly points from the list.
 
-    Return a list of tuples (trait name, cost)
-    lst is a list of lists of tuples (trait, cost)
+    Return a list of tuples (trait name, cost, trait_type)
     chosen traits are removed from lst
     """
     original_lst = copy.deepcopy(lst)
-    traits = []
+    traits: List[Tuple[str, int, TraitType]] = []
     points_left = points
     while lst and points_left != 0:
         lst2 = random.choice(lst)
@@ -129,7 +144,7 @@ def pick_from_list_enforcing_prereqs(lst, points, original_traits):
     return traits
 
 
-def next_skill_cost(cost):
+def next_skill_cost(cost: int) -> int:
     """Return the next higher skill cost after cost."""
     if cost == 0:
         return 1
@@ -141,17 +156,18 @@ def next_skill_cost(cost):
         return cost + 4
 
 
-def pick_or_improve_skills_from_list(skills, points, traits, min_cost=1):
+def pick_or_improve_skills_from_list(
+    skills: Set[str],
+    points: int,
+    traits: List[Tuple[str, int, TraitType]],
+    min_cost: int = 1,
+) -> None:
     """Add points to skills, and modify traits in place.
 
     If a skill is already in traits then bring it up to the next
     level, if enough points remain.
 
     Otherwise add it at the 1-point level.
-
-    :param skills is a set of skill names
-    :param points int number of points to spend
-    :param traits list of (trait name, points) tuples
     """
     points_left = points
     skills_lst = list(skills)
@@ -172,7 +188,7 @@ def pick_or_improve_skills_from_list(skills, points, traits, min_cost=1):
             points_left -= cost2
 
 
-def fix_language_talent(traits):
+def fix_language_talent(traits: List[Tuple[str, int, TraitType]]) -> None:
     """If traits includes Language Talent and any Language, fix the language's
     proficiency level or cost to take it into account."""
     trait_names = set((tup[0] for tup in traits))
@@ -201,7 +217,7 @@ def fix_language_talent(traits):
             traits[ii] = (trait_name, cost, trait_type)
 
 
-def print_traits(traits):
+def print_traits(traits: List[Tuple[str, int, TraitType]]) -> None:
     total_cost = 0
 
     # Print primary and secondary attributes in fixed order
@@ -251,7 +267,7 @@ def print_traits(traits):
     print("\ntotal points: %d" % total_cost)
 
 
-def generate_barbarian():
+def generate_barbarian() -> List[Tuple[str, int, TraitType]]:
     traits = [
         ("ST 17", 63, PA),
         ("DX 13", 60, PA),
@@ -403,7 +419,7 @@ def generate_barbarian():
     return traits
 
 
-def generate_bard():
+def generate_bard() -> List[Tuple[str, int, TraitType]]:
     traits = [
         ("ST 11", 10, PA),
         ("DX 12", 40, PA),
@@ -593,13 +609,15 @@ def generate_bard():
     return traits
 
 
-def merge_traits(traits):
+def merge_traits(
+    traits: List[Tuple[str, int, TraitType]]
+) -> List[Tuple[str, int, TraitType]]:
     """Merge traits like "ST 12" and "ST +2" or "Magery 3" and "Magery 4".
 
     Return a new traits list of (name, cost) tuples.
     """
-    bare_name_to_level = {}
-    bare_name_to_cost = {}
+    bare_name_to_level: Dict[str, float] = {}
+    bare_name_to_cost: Dict[str, int] = {}
     trait_name_to_bare_name = {}
     plus_pat = "(.*) \+(\d+)$"
     level_pat = "(.*) ([0-9.]+)$"
@@ -631,7 +649,7 @@ def merge_traits(traits):
                 trait_name_to_bare_name[trait_name] = bare_name
 
     traits2 = []
-    bare_names_done = set()
+    bare_names_done: Set[str] = set()
     for trait_name, cost, trait_type in traits:
         bare_name = trait_name_to_bare_name.get(trait_name)
         if bare_name in bare_names_done:
@@ -647,7 +665,7 @@ def merge_traits(traits):
     return traits2
 
 
-def generate_cleric():
+def generate_cleric() -> List[Tuple[str, int, TraitType]]:
     traits = [
         ("ST 12", 20, PA),
         ("DX 12", 40, PA),
@@ -960,7 +978,7 @@ def generate_cleric():
     return traits
 
 
-def generate_druid():
+def generate_druid() -> List[Tuple[str, int, TraitType]]:
     traits = [
         ("ST 11", 10, PA),
         ("DX 12", 40, PA),
@@ -1240,8 +1258,8 @@ def generate_druid():
     ]
     # Avoid duplicate Hidden Lore
     for trait in traits:
-        if trait in skills5:
-            skills5.remove(trait)
+        if [trait] in skills5:
+            skills5.remove([trait])
     traits.extend(pick_from_list(skills5, 3))
 
     trait_names = set((trait[0] for trait in traits))
@@ -1292,7 +1310,7 @@ def generate_druid():
     return traits
 
 
-def generate_holy_warrior():
+def generate_holy_warrior() -> List[Tuple[str, int, TraitType]]:
     traits = [
         ("ST 13", 30, PA),
         ("DX 13", 60, PA),
@@ -1395,8 +1413,8 @@ def generate_holy_warrior():
     ads2.extend(ads1)
     # Avoid duplicate Higher Purpose
     for trait in traits:
-        if trait in ads2:
-            ads2.remove(trait)
+        if [trait] in ads2:
+            ads2.remove([trait])
     traits.extend(pick_from_list(ads2, 50))
 
     disads1 = [
@@ -1486,7 +1504,7 @@ def generate_holy_warrior():
     return traits
 
 
-def generate_knight():
+def generate_knight() -> List[Tuple[str, int, TraitType]]:
     traits = [
         ("ST 14", 40, PA),
         ("DX 14", 80, PA),
@@ -1642,7 +1660,7 @@ def generate_knight():
 
 
 # TODO Find the bug where sometimes we only use 236/250 points
-def generate_martial_artist():
+def generate_martial_artist() -> List[Tuple[str, int, TraitType]]:
     traits = [
         ("ST 11", 10, PA),
         ("DX 16", 120, PA),
@@ -1867,12 +1885,13 @@ def generate_martial_artist():
         remaining_special_skill_names = list(
             special_skill_names - trait_names - {"Flying Leap"}
         )
+        # TODO Rarely this fails because it's empty.  How?
         name2 = random.choice(remaining_special_skill_names)
         traits.append((name2, total_cost, SK))
     return traits
 
 
-def generate_scout():
+def generate_scout() -> List[Tuple[str, int, TraitType]]:
     traits = [
         ("ST 13", 30, PA),
         ("DX 14", 80, PA),
@@ -2019,7 +2038,7 @@ def generate_scout():
     return traits
 
 
-def generate_swashbuckler():
+def generate_swashbuckler() -> List[Tuple[str, int, TraitType]]:
     traits = [
         ("ST 11", 10, PA),
         ("DX 15", 100, PA),
@@ -2179,7 +2198,7 @@ def generate_swashbuckler():
     return traits
 
 
-def generate_thief():
+def generate_thief() -> List[Tuple[str, int, TraitType]]:
     traits = [
         ("ST 11", 10, PA),
         ("DX 15", 100, PA),
@@ -3088,11 +3107,11 @@ allowed_bard_colleges = {"Communication", "Mind Control"}
 
 
 # dict of spell name to set of colleges to which it belongs
-spell_to_colleges = None
+spell_to_colleges: Dict[str, Set[str]] = {}
 
-# dict of spell name to a function that takes (traits, trait_names) as
+# dict of spell name to text of a function that takes (traits, trait_names) as
 # arguments and returns True iff the prereqs are satisfied
-spell_to_prereq_function = None
+spell_to_prereq_function: Dict[str, str] = {}
 
 # gcs_library/spell_list/spell/name
 # gcs_library/spell_list/spell/categories/category
@@ -3117,8 +3136,8 @@ spell_to_prereq_function = None
 #      should be college earth not name earth
 
 
-def count_spell_colleges(traits):
-    colleges = set()
+def count_spell_colleges(traits: List[Tuple[str, int, TraitType]]) -> int:
+    colleges: Set[str] = set()
     for tup in traits:
         name = tup[0]
         if name in spell_to_colleges:
@@ -3126,8 +3145,10 @@ def count_spell_colleges(traits):
     return len(colleges)
 
 
-def count_spells_from_each_college(traits):
-    college_count = Counter()
+def count_spells_from_each_college(
+    traits: List[Tuple[str, int, TraitType]]
+) -> typing.Counter[str]:
+    college_count: typing.Counter[str] = Counter()
     for tup in traits:
         name = tup[0]
         for college in spell_to_colleges.get(name, []):
@@ -3135,7 +3156,9 @@ def count_spells_from_each_college(traits):
     return college_count
 
 
-def count_spells_starting_with(traits, st):
+def count_spells_starting_with(
+    traits: List[Tuple[str, int, TraitType]], st: str
+) -> int:
     count = 0
     for tup in traits:
         name = tup[0].title()
@@ -3144,7 +3167,9 @@ def count_spells_starting_with(traits, st):
     return count
 
 
-def count_spells_containing(traits, st):
+def count_spells_containing(
+    traits: List[Tuple[str, int, TraitType]], st: str
+) -> int:
     count = 0
     for tup in traits:
         name = tup[0].title()
@@ -3153,7 +3178,7 @@ def count_spells_containing(traits, st):
     return count
 
 
-def count_spells(traits):
+def count_spells(traits: List[Tuple[str, int, TraitType]]) -> int:
     count = 0
     for tup in traits:
         name = tup[0].title()
@@ -3162,7 +3187,7 @@ def count_spells(traits):
     return count
 
 
-def _parse_spell_prereq(el, function_name):
+def _parse_spell_prereq(el: et.Element, function_name: str) -> str:
     """Parse a <spell_prereq> element and its children.
 
     Return a str of Python code that takes traits and trait_names as
@@ -3359,7 +3384,7 @@ def %s(traits, trait_names):
     assert False, "parse_spell_prereq %s" % et.tostring(el)
 
 
-def _parse_advantage_prereq(el, function_name):
+def _parse_advantage_prereq(el: et.Element, function_name: str) -> str:
     """Parse a <advantage_prereq> element and its children.
 
     Return a str of Python code that takes traits and trait_names as
@@ -3578,7 +3603,7 @@ def %s(traits, trait_names):
     assert False, "parse_advantage_prereq %s" % et.tostring(el)
 
 
-def _parse_attribute_prereq(el, function_name):
+def _parse_attribute_prereq(el: et.Element, function_name: str) -> str:
     """Parse a <attribute_prereq> element and its children.
 
     Return a str of Python code that takes traits and trait_names as
@@ -3606,7 +3631,7 @@ def %s(traits, trait_names):
     assert False, "parse_attribute_prereq %s" % et.tostring(el)
 
 
-def _parse_skill_prereq(el, function_name):
+def _parse_skill_prereq(el: et.Element, function_name: str) -> str:
     """Parse a <skill_prereq> element and its children.
 
     Return a str of Python code that takes traits and trait_names as
@@ -3679,7 +3704,7 @@ def or_(*args):
 function_name_incrementor = 0
 
 
-def _parse_prereq_list(prereq_list_el, top_name):
+def _parse_prereq_list(prereq_list_el: et.Element, top_name: str) -> str:
     global function_name_incrementor
     sts = []
     sts.append(and_or)
@@ -3726,7 +3751,7 @@ def _parse_prereq_list(prereq_list_el, top_name):
     return blob
 
 
-def _parse_no_prereqs(prereq_list_el, top_name):
+def _parse_no_prereqs(prereq_list_el: et.Element, top_name: str) -> str:
     """Return the text of a function that always returns True."""
     global function_name_incrementor
     function_name = "pnp_%s" % function_name_incrementor
@@ -3741,7 +3766,7 @@ def %s(traits, trait_names):
     )
 
 
-def build_spell_prereqs(allowed_colleges=None):
+def build_spell_prereqs(allowed_colleges: Set[str] = None) -> None:
     """Fill in global dicts spell_to_colleges and spell_to_prereq_function."""
     global spell_to_colleges
     spell_to_colleges = {}
@@ -3778,7 +3803,7 @@ def build_spell_prereqs(allowed_colleges=None):
         spell_to_prereq_function[name] = blob
 
 
-def add_special_bard_skills_to_spell_prereqs():
+def add_special_bard_skills_to_spell_prereqs() -> None:
     """Add special bard skills to spell_to_colleges and
     spell_to_prereq_function."""
     global spell_to_colleges
@@ -3812,7 +3837,7 @@ def add_special_bard_skills_to_spell_prereqs():
         spell_to_prereq_function[name] = blob
 
 
-def convert_magery_to_bardic_talent():
+def convert_magery_to_bardic_talent() -> None:
     """Bards treat Bardic Talent as Magery for their prereqs."""
     global spell_to_prereq_function
     for spell, blob in spell_to_prereq_function.items():
@@ -3821,7 +3846,9 @@ def convert_magery_to_bardic_talent():
             spell_to_prereq_function[spell] = blob2
 
 
-def prereq_satisfied(spell, traits):
+def prereq_satisfied(
+    spell: str, traits: List[Tuple[str, int, TraitType]]
+) -> bool:
     """Return True iff any prereqs for spell are satisfied."""
     trait_names = set((trait[0] for trait in traits))
     blob = spell_to_prereq_function.get(spell)
@@ -3836,7 +3863,9 @@ def prereq_satisfied(spell, traits):
     return bool(nsl[top_name])
 
 
-def add_spell(traits, trait_names):
+def add_spell(
+    traits: List[Tuple[str, int, TraitType]], trait_names: Set[str]
+) -> None:
     """Add one spell to traits, at the one-point level."""
     while True:
         spell = random.choice(list(spell_to_prereq_function.keys()))
@@ -3850,7 +3879,7 @@ def add_spell(traits, trait_names):
 
 # TODO support multiple languages
 # Maybe language as leveled 1-30 or 2-30, then split it up
-def generate_wizard():
+def generate_wizard() -> List[Tuple[str, int, TraitType]]:
     traits = [
         ("ST 10", 0, PA),
         ("DX 12", 40, PA),
@@ -3995,8 +4024,8 @@ def generate_wizard():
     # Remove duplicate Hidden Lore
     trait_names = set((trait[0] for trait in traits))
     for trait_name in trait_names:
-        if (trait_name, 1) in skills4:
-            skills4.remove((trait_name, 1))
+        if [(trait_name, 1, SK)] in skills4:
+            skills4.remove([(trait_name, 1, SK)])
     traits.extend(pick_from_list(skills4, 9))
 
     trait_names = set((trait[0] for trait in traits))
@@ -4023,7 +4052,7 @@ template_to_fn = {
 templates = sorted(template_to_fn.keys())
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description="Generate a random GURPS Dungeon Fantasy character"
     )
