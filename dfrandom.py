@@ -1659,7 +1659,6 @@ def generate_knight() -> List[Tuple[str, int, TraitType]]:
     return traits
 
 
-# TODO Find the bug where sometimes we only use 236/250 points
 def generate_martial_artist() -> List[Tuple[str, int, TraitType]]:
     traits = [
         ("ST 11", 10, PA),
@@ -1703,6 +1702,11 @@ def generate_martial_artist() -> List[Tuple[str, int, TraitType]]:
         [("Blind Fighting", 2, SK)],
     ]
 
+    special_skill_names = set()
+    for lst in special_skills:
+        for tup in lst:
+            special_skill_names.add(tup[0])
+
     ads1 = [
         [("Catfall (PM)", 9, AD)],
         [("DR 1 (Tough Skin, PM)", 3, AD), ("DR 2 (Touch Skin, PM)", 5, AD)],
@@ -1732,7 +1736,7 @@ def generate_martial_artist() -> List[Tuple[str, int, TraitType]]:
         [("Striking ST 1 (PM)", 5, AD), ("Striking ST 2 (PM)", 9, AD)],
         list_levels("Super Jump %d (PM)", 9, AD, 2),
     ]
-    ads1.extend(special_skills[:])
+    ads1.extend(special_skills)
     traits.extend(pick_from_list(ads1, 20))
 
     ads2 = [
@@ -1866,10 +1870,6 @@ def generate_martial_artist() -> List[Tuple[str, int, TraitType]]:
     ]
     traits.extend(pick_from_list(skills4, 3))
 
-    special_skill_names = set()
-    for lst in special_skills:
-        for tup in lst:
-            special_skill_names.add(tup[0])
     pick_or_improve_skills_from_list(
         special_skill_names, 14, traits, min_cost=2
     )
@@ -1885,7 +1885,6 @@ def generate_martial_artist() -> List[Tuple[str, int, TraitType]]:
         remaining_special_skill_names = list(
             special_skill_names - trait_names - {"Flying Leap"}
         )
-        # TODO Rarely this fails because it's empty.  How?
         name2 = random.choice(remaining_special_skill_names)
         traits.append((name2, total_cost, SK))
     return traits
