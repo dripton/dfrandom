@@ -1257,9 +1257,11 @@ def generate_druid() -> List[Tuple[str, int, TraitType]]:
         [("Poisons", 1, SK)],
     ]
     # Avoid duplicate Hidden Lore
-    for trait in traits:
-        if [trait] in skills5:
-            skills5.remove([trait])
+    trait_names = set((trait[0] for trait in traits))
+    for trait_name in trait_names:
+        if [(trait_name, 1, SK)] in skills5:
+            skills5.remove([(trait_name, 1, SK)])
+
     traits.extend(pick_from_list(skills5, 3))
 
     trait_names = set((trait[0] for trait in traits))
